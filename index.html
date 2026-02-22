@@ -2,336 +2,320 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Avintix Comply360</title>
+<title>Avintix Comply360 Enterprise</title>
 
 <style>
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #F4F7FB;
-    margin: 0;
-    padding: 20px;
-    color: #1f2937;
+body{margin:0;font-family:Segoe UI;background:#F4F7FB;}
+.header{
+background:#0B3C5D;color:white;padding:15px 25px;
+display:flex;justify-content:space-between;align-items:center;
 }
-
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 1400px;
-    margin: auto;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+.logo{font-weight:bold;font-size:18px;}
+.standard-select{
+background:#1D9BF0;border:none;color:white;
+padding:6px 10px;border-radius:6px;
 }
-
-h1 {
-    text-align: center;
-    color: #0B3C5D;
-    margin-bottom: 30px;
+.layout{display:flex;height:calc(100vh - 60px);}
+.sidebar{
+width:230px;background:#082C45;color:white;padding-top:20px;
 }
-
-h2 {
-    color: #0B3C5D;
-    margin-bottom: 15px;
+.sidebar button{
+width:90%;margin:8px 5%;padding:10px;
+background:none;border:1px solid #1D9BF0;
+color:white;border-radius:6px;text-align:left;cursor:pointer;
 }
-
-.section {
-    margin-top: 25px;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border-left: 6px solid #1D9BF0;
+.sidebar button:hover{background:#1D9BF0;}
+.content{flex:1;padding:20px;overflow:auto;}
+.card{
+background:white;padding:15px;border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:20px;
 }
-
-.question {
-    margin: 15px 0;
-    padding: 12px;
-    background: #f9fbff;
-    border-radius: 8px;
+.card-title{font-weight:600;color:#0B3C5D;margin-bottom:10px;}
+input,select,textarea{
+width:100%;padding:6px;margin-top:5px;
+border-radius:6px;border:1px solid #ccc;
 }
-
-select, textarea, input {
-    margin-top: 6px;
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
+button.primary{
+background:#1D9BF0;border:none;color:white;
+padding:8px 12px;border-radius:6px;cursor:pointer;margin-top:8px;
 }
-
-textarea { height: 60px; }
-
-button {
-    padding: 10px 16px;
-    margin: 10px 8px 0 0;
-    background: #0B3C5D;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s ease;
-    font-weight: 500;
+button.primary:hover{background:#0B3C5D;}
+.section{display:none;}
+.active{display:block;}
+.question{
+background:#f9f9f9;padding:8px;margin:6px 0;border-radius:6px;
 }
-
-button:hover { background: #1D9BF0; }
-
-.result {
-    margin-top: 25px;
-    padding: 20px;
-    background: #E8F8F2;
-    border-radius: 10px;
-    border-left: 6px solid #2ECC71;
+.evidence{font-size:12px;color:#555;margin-top:4px;display:none;}
+.heatbox{
+display:inline-block;width:140px;padding:12px;
+margin:5px;border-radius:8px;color:white;text-align:center;
+font-weight:600;
 }
-
-.ncr-major {
-    background: #FDECEA;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border-left: 6px solid #E74C3C;
-}
-
-.ncr-minor {
-    background: #FFF8E6;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border-left: 6px solid #F39C12;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-table th {
-    background: #0B3C5D;
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-table td {
-    padding: 10px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-table tr:hover { background: #f3f8ff; }
-
-canvas {
-    background: white;
-    margin-top: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+.green{background:#2ECC71;}
+.yellow{background:#F39C12;}
+.red{background:#E74C3C;}
+.blue{background:#1D9BF0;}
 </style>
 </head>
+
 <body>
 
-<div class="container">
-
-<h1>Avintix Compliance – ISO 9001 Internal CMS</h1>
-
-<!-- HEADER -->
-<div class="section">
-<h2>Audit Information</h2>
-<label>Client Name:</label>
-<input type="text" id="client">
-<label>Auditor Name:</label>
-<input type="text" id="auditor">
-<label>Audit Date:</label>
-<input type="date" id="date">
-<label>Scope:</label>
-<input type="text" id="scope">
+<div class="header">
+<div class="logo">AVINTIX | Comply360</div>
+<select class="standard-select">
+<option>ISO 9001</option>
+</select>
 </div>
 
-<!-- AUDIT ENGINE -->
-<div id="auditForm"></div>
+<div class="layout">
 
-<button onclick="generateReport()">Generate Report</button>
-<button onclick="saveAudit()">Save Audit</button>
-<input type="file" onchange="loadAudit(event)">
-<button onclick="window.print()">Print / Save as PDF</button>
+<div class="sidebar">
+<button onclick="showSection('dashboard')">Dashboard</button>
+<button onclick="showSection('audit')">Audit Engine</button>
+</div>
 
-<div id="result" class="result" style="display:none;"></div>
+<div class="content">
 
 <!-- DASHBOARD -->
-<div class="section">
-<h2>Compliance Dashboard</h2>
-<canvas id="chartCanvas" width="1000" height="400"></canvas>
+<div id="dashboard" class="section active">
+<div class="card">
+<div class="card-title">Executive Dashboard</div>
+
+<select id="customerDropdown" onchange="loadVersions()">
+<option value="">-- Select Customer --</option>
+</select>
+
+<select id="versionDropdown" onchange="renderDashboard()"></select>
+
+<div id="dashboardContent"></div>
+
+</div>
 </div>
 
-<!-- DOCUMENT TRACKER -->
-<div class="section">
-<h2>Document Tracker</h2>
-<input type="text" id="docName" placeholder="Document Name">
-<input type="text" id="docVersion" placeholder="Version">
-<input type="text" id="docOwner" placeholder="Owner">
-<input type="text" id="docStatus" placeholder="Status">
-<button onclick="addDocument()">Add Document</button>
-<table id="docTable">
-<tr><th>Name</th><th>Version</th><th>Owner</th><th>Status</th></tr>
-</table>
+<!-- AUDIT -->
+<div id="audit" class="section">
+
+<div class="card">
+<div class="card-title">Customer</div>
+<input id="customerName" placeholder="Customer Name">
+<button class="primary" onclick="createCustomer()">Create</button>
 </div>
 
-<!-- AUDIT CALENDAR -->
-<div class="section">
-<h2>Audit Calendar</h2>
-<input type="text" id="auditType" placeholder="Audit Type">
-<input type="date" id="auditDate">
-<button onclick="addAudit()">Add Audit</button>
-<table id="calendarTable">
-<tr><th>Audit Type</th><th>Date</th></tr>
-</table>
+<div class="card">
+<div class="card-title">ISO 9001 Structured Audit</div>
+<div id="auditForm"></div>
+<button class="primary" onclick="saveAudit()">Save Version</button>
 </div>
 
+</div>
+
+</div>
 </div>
 
 <script>
-const auditData = {
-"Clause 4 - Context":["Scope defined?","Internal issues identified?","External issues identified?","Interested parties identified?","Needs monitored?","Processes defined?","Process interaction defined?","Outsourced processes controlled?"],
-"Clause 5 - Leadership":["Quality policy established?","Policy communicated?","Customer focus demonstrated?","Roles assigned?","Accountability defined?","Resources provided?","Policy reviewed?","Compliance commitment demonstrated?"],
-"Clause 6 - Planning":["Risks identified?","Opportunities identified?","Risk actions planned?","Objectives measurable?","Objectives monitored?","Change controlled?","Contingency planning defined?","Planning integrated?"],
-"Clause 7 - Support":["Competence defined?","Training provided?","Awareness ensured?","Communication defined?","Document control implemented?","Version control maintained?","Infrastructure maintained?","Equipment calibrated?"],
-"Clause 8 - Operation":["Operational controls defined?","Work instructions available?","Customer requirements reviewed?","Design control implemented?","Supplier evaluation done?","Supplier performance monitored?","Traceability maintained?","Nonconforming output controlled?"],
-"Clause 9 - Performance":["KPIs defined?","KPIs monitored?","Customer satisfaction measured?","Internal audit conducted?","Audit findings recorded?","Management review conducted?","Review outputs documented?","Trends analyzed?"],
-"Clause 10 - Improvement":["Corrective action defined?","Root cause analysis done?","Corrective actions implemented?","Effectiveness verified?","Continual improvement demonstrated?","Preventive actions identified?","Lessons learned documented?","Improvements communicated?"]
+
+function showSection(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+// ---------------- DATA ----------------
+function getData(){
+return JSON.parse(localStorage.getItem("comply_risk"))||{customers:{}};
+}
+function saveData(d){
+localStorage.setItem("comply_risk",JSON.stringify(d));
+}
+
+// ---------------- RISK WEIGHTS ----------------
+const clauseWeights={
+"4":1.1,
+"5":1.3,
+"6":1.4,
+"7":1.0,
+"8":1.3,
+"9":1.2,
+"10":1.3
 };
 
-let formHTML="";
-for(let clause in auditData){
-formHTML+=`<div class="section"><h2>${clause}</h2>`;
-auditData[clause].forEach(q=>{
-formHTML+=`
+// ---------------- ISO QUESTIONS ----------------
+const isoQuestions=[
+{clause:"4.1",title:"Context",q:"Has organization identified internal & external issues?",e:"SWOT, risk analysis"},
+{clause:"5.1",title:"Leadership",q:"Does top management demonstrate commitment?",e:"Meeting minutes"},
+{clause:"6.1",title:"Risk Planning",q:"Are risks identified and mitigated?",e:"Risk register"},
+{clause:"7.5",title:"Document Control",q:"Are documents controlled?",e:"Doc control procedure"},
+{clause:"8.2",title:"Customer Requirements",q:"Are customer requirements reviewed?",e:"Contract review"},
+{clause:"9.2",title:"Internal Audit",q:"Are audits conducted periodically?",e:"Audit program"},
+{clause:"10.2",title:"Corrective Action",q:"Are root causes identified?",e:"RCA report"}
+];
+
+// duplicate to 35+ questions
+while(isoQuestions.length<35){
+isoQuestions.push({...isoQuestions[isoQuestions.length%7]});
+}
+
+// Build form
+let form="";
+isoQuestions.forEach((q,i)=>{
+form+=`
 <div class="question">
-<strong>${q}</strong>
-<select class="score">
+<b>${q.clause} – ${q.title}</b><br>
+${q.q}
+<br>
+<button type="button" onclick="toggleEvidence(${i})">Show Evidence</button>
+<div id="ev${i}" class="evidence">${q.e}</div>
+<select class="answer">
 <option value="2">Yes</option>
 <option value="1">Partial</option>
 <option value="0">No</option>
 </select>
-<textarea placeholder="Comments"></textarea>
+<textarea placeholder="Comment"></textarea>
 </div>`;
 });
-formHTML+=`</div>`;
+document.getElementById("auditForm").innerHTML=form;
+
+function toggleEvidence(i){
+let el=document.getElementById("ev"+i);
+el.style.display=el.style.display==="none"?"block":"none";
 }
-document.getElementById("auditForm").innerHTML=formHTML;
 
-function generateReport(){
-let scores=document.getElementsByClassName("score");
-let comments=document.getElementsByTagName("textarea");
+// ---------------- CUSTOMER ----------------
+function createCustomer(){
+let name=document.getElementById("customerName").value.trim();
+if(!name)return;
+let d=getData();
+if(!d.customers[name])d.customers[name]=[];
+saveData(d);
+populateCustomers();
+}
 
-let total=0,max=0,index=0;
+function populateCustomers(){
+let d=getData();
+let dd=document.getElementById("customerDropdown");
+dd.innerHTML='<option value="">-- Select Customer --</option>';
+Object.keys(d.customers).forEach(c=>{
+let o=document.createElement("option");
+o.value=c;o.text=c;dd.appendChild(o);
+});
+}
+populateCustomers();
+
+// ---------------- SAVE AUDIT ----------------
+function saveAudit(){
+let customer=document.getElementById("customerDropdown").value;
+if(!customer)return alert("Select customer");
+
+let d=getData();
+let answers=document.querySelectorAll(".answer");
+
+let total=0,max=0;
+let weightedTotal=0,weightedMax=0;
 let clauseScores={};
-let majorNCR="", minorNCR="";
+let major=0,minor=0;
 
-Object.keys(auditData).forEach(c=>clauseScores[c]=0);
+isoQuestions.forEach((q,i)=>{
+let score=parseInt(answers[i].value);
+let root=q.clause.split(".")[0];
+let weight=clauseWeights[root]||1;
 
-for(let clause in auditData){
-auditData[clause].forEach(q=>{
-let score=parseInt(scores[index].value);
-total+=score; max+=2;
-clauseScores[clause]+=score;
+total+=score;
+max+=2;
 
-if(score===0){
-majorNCR+=`<div class="ncr-major"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
+weightedTotal+=score*weight;
+weightedMax+=2*weight;
+
+if(!clauseScores[q.clause])
+clauseScores[q.clause]={total:0,count:0};
+
+clauseScores[q.clause].total+=score;
+clauseScores[q.clause].count++;
+
+if(score===0)major++;
+if(score===1)minor++;
+});
+
+let rawScore=Math.round((total/max)*100);
+let weightedScore=Math.round((weightedTotal/weightedMax)*100);
+
+let version={
+timestamp:Date.now(),
+rawScore:rawScore,
+weightedScore:weightedScore,
+clauseScores:clauseScores,
+major:major,
+minor:minor
+};
+
+d.customers[customer].push(version);
+saveData(d);
+
+loadVersions();
+renderDashboard();
 }
-if(score===1){
-minorNCR+=`<div class="ncr-minor"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
-}
-index++;
+
+// ---------------- VERSION ----------------
+function loadVersions(){
+let customer=document.getElementById("customerDropdown").value;
+if(!customer)return;
+let d=getData();
+let versions=d.customers[customer];
+
+let vd=document.getElementById("versionDropdown");
+vd.innerHTML="";
+
+versions.sort((a,b)=>b.timestamp-a.timestamp);
+
+versions.forEach((v,i)=>{
+let o=document.createElement("option");
+o.value=i;
+o.text=new Date(v.timestamp).toLocaleDateString()+" - "+v.weightedScore+"%";
+vd.appendChild(o);
 });
 }
 
-let percent=Math.round((total/max)*100);
-let status=percent<=40?"High Risk":percent<=70?"Needs Improvement":percent<=85?"Almost Ready":"Certification Ready";
+// ---------------- DASHBOARD ----------------
+function renderDashboard(){
+let customer=document.getElementById("customerDropdown").value;
+if(!customer)return;
 
-let roadmap = percent<=70 ?
-"<h4>30-60-90 Day Plan</h4><p>0-30: Define policies & risk register</p><p>30-60: Implement processes & internal audit</p><p>60-90: Management review & corrective actions</p>"
-:"Minor improvements before certification.";
+let d=getData();
+let versions=d.customers[customer];
+let idx=document.getElementById("versionDropdown").value;
+let v=versions[idx];
+let prev=versions[parseInt(idx)+1];
 
-document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=`
-<h3>Overall Compliance: ${percent}%</h3>
-<p>Status: ${status}</p>
-<hr>
-<h4>Major NCR</h4>${majorNCR||"None"}
-<h4>Minor NCR</h4>${minorNCR||"None"}
-<hr>${roadmap}
+let trend="";
+if(prev){
+let diff=v.weightedScore-prev.weightedScore;
+if(diff>0)trend=" ▲ +"+diff+"%";
+if(diff<0)trend=" ▼ "+diff+"%";
+}
+
+let html=`
+<div class="heatbox green">
+Raw Score<br>${v.rawScore}%
+</div>
+<div class="heatbox blue">
+Risk Weighted<br>${v.weightedScore}% ${trend}
+</div>
+<div class="heatbox yellow">
+Major NCR<br>${v.major}
+</div>
+<div class="heatbox red">
+Minor NCR<br>${v.minor}
+</div>
+<h4>Clause Heatmap</h4>
 `;
 
-drawChart(clauseScores);
-}
-
-function drawChart(clauseScores){
-let canvas=document.getElementById("chartCanvas");
-let ctx=canvas.getContext("2d");
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-let clauses=Object.keys(clauseScores);
-let barWidth=80;
-let gap=30;
-
-clauses.forEach((clause,i)=>{
-let percent=Math.round((clauseScores[clause]/(auditData[clause].length*2))*100);
-let x=60+(barWidth+gap)*i;
-let height=percent*3;
-
-ctx.fillStyle="#0B3C5D";
-ctx.fillRect(x,350-height,barWidth,height);
-ctx.fillStyle="black";
-ctx.fillText(percent+"%",x,340-height);
-ctx.fillText(clause.split(" ")[1],x,370);
+Object.keys(v.clauseScores).forEach(c=>{
+let percent=Math.round((v.clauseScores[c].total/(v.clauseScores[c].count*2))*100);
+let cls=percent>=85?"green":percent>=70?"yellow":"red";
+html+=`<div class="heatbox ${cls}">${c}<br>${percent}%</div>`;
 });
+
+document.getElementById("dashboardContent").innerHTML=html;
 }
 
-function saveAudit(){
-let data={
-client:client.value,
-auditor:auditor.value,
-date:date.value,
-scope:scope.value,
-scores:[...document.getElementsByClassName("score")].map(s=>s.value),
-comments:[...document.getElementsByTagName("textarea")].map(t=>t.value)
-};
-let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="avintix_audit.json";
-a.click();
-}
-
-function loadAudit(event){
-let file=event.target.files[0];
-let reader=new FileReader();
-reader.onload=function(e){
-let data=JSON.parse(e.target.result);
-client.value=data.client;
-auditor.value=data.auditor;
-date.value=data.date;
-scope.value=data.scope;
-document.querySelectorAll(".score").forEach((s,i)=>s.value=data.scores[i]);
-document.querySelectorAll("textarea").forEach((t,i)=>t.value=data.comments[i]);
-};
-reader.readAsText(file);
-}
-
-function addDocument(){
-let row=document.getElementById("docTable").insertRow();
-row.insertCell(0).innerText=docName.value;
-row.insertCell(1).innerText=docVersion.value;
-row.insertCell(2).innerText=docOwner.value;
-row.insertCell(3).innerText=docStatus.value;
-docName.value=docVersion.value=docOwner.value=docStatus.value="";
-}
-
-function addAudit(){
-let row=document.getElementById("calendarTable").insertRow();
-row.insertCell(0).innerText=auditType.value;
-row.insertCell(1).innerText=auditDate.value;
-auditType.value=auditDate.value="";
-}
 </script>
-
 </body>
 </html>
