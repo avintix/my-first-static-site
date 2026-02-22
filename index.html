@@ -1,12 +1,337 @@
-
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My First Static Site</title>
+<meta charset="UTF-8">
+<title>Avintix Compliance – ISO 9001 Internal CMS</title>
+
+<style>
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #F4F7FB;
+    margin: 0;
+    padding: 20px;
+    color: #1f2937;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 1400px;
+    margin: auto;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+h1 {
+    text-align: center;
+    color: #0B3C5D;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #0B3C5D;
+    margin-bottom: 15px;
+}
+
+.section {
+    margin-top: 25px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-left: 6px solid #1D9BF0;
+}
+
+.question {
+    margin: 15px 0;
+    padding: 12px;
+    background: #f9fbff;
+    border-radius: 8px;
+}
+
+select, textarea, input {
+    margin-top: 6px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+textarea { height: 60px; }
+
+button {
+    padding: 10px 16px;
+    margin: 10px 8px 0 0;
+    background: #0B3C5D;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-weight: 500;
+}
+
+button:hover { background: #1D9BF0; }
+
+.result {
+    margin-top: 25px;
+    padding: 20px;
+    background: #E8F8F2;
+    border-radius: 10px;
+    border-left: 6px solid #2ECC71;
+}
+
+.ncr-major {
+    background: #FDECEA;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border-left: 6px solid #E74C3C;
+}
+
+.ncr-minor {
+    background: #FFF8E6;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border-left: 6px solid #F39C12;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table th {
+    background: #0B3C5D;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+table tr:hover { background: #f3f8ff; }
+
+canvas {
+    background: white;
+    margin-top: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+</style>
 </head>
 <body>
-  <h1>It works 🎉</h1>
-  <p>This page is served from Azure Static Web Apps.</p>
+
+<div class="container">
+
+<h1>Avintix Compliance – ISO 9001 Internal CMS</h1>
+
+<!-- HEADER -->
+<div class="section">
+<h2>Audit Information</h2>
+<label>Client Name:</label>
+<input type="text" id="client">
+<label>Auditor Name:</label>
+<input type="text" id="auditor">
+<label>Audit Date:</label>
+<input type="date" id="date">
+<label>Scope:</label>
+<input type="text" id="scope">
+</div>
+
+<!-- AUDIT ENGINE -->
+<div id="auditForm"></div>
+
+<button onclick="generateReport()">Generate Report</button>
+<button onclick="saveAudit()">Save Audit</button>
+<input type="file" onchange="loadAudit(event)">
+<button onclick="window.print()">Print / Save as PDF</button>
+
+<div id="result" class="result" style="display:none;"></div>
+
+<!-- DASHBOARD -->
+<div class="section">
+<h2>Compliance Dashboard</h2>
+<canvas id="chartCanvas" width="1000" height="400"></canvas>
+</div>
+
+<!-- DOCUMENT TRACKER -->
+<div class="section">
+<h2>Document Tracker</h2>
+<input type="text" id="docName" placeholder="Document Name">
+<input type="text" id="docVersion" placeholder="Version">
+<input type="text" id="docOwner" placeholder="Owner">
+<input type="text" id="docStatus" placeholder="Status">
+<button onclick="addDocument()">Add Document</button>
+<table id="docTable">
+<tr><th>Name</th><th>Version</th><th>Owner</th><th>Status</th></tr>
+</table>
+</div>
+
+<!-- AUDIT CALENDAR -->
+<div class="section">
+<h2>Audit Calendar</h2>
+<input type="text" id="auditType" placeholder="Audit Type">
+<input type="date" id="auditDate">
+<button onclick="addAudit()">Add Audit</button>
+<table id="calendarTable">
+<tr><th>Audit Type</th><th>Date</th></tr>
+</table>
+</div>
+
+</div>
+
+<script>
+const auditData = {
+"Clause 4 - Context":["Scope defined?","Internal issues identified?","External issues identified?","Interested parties identified?","Needs monitored?","Processes defined?","Process interaction defined?","Outsourced processes controlled?"],
+"Clause 5 - Leadership":["Quality policy established?","Policy communicated?","Customer focus demonstrated?","Roles assigned?","Accountability defined?","Resources provided?","Policy reviewed?","Compliance commitment demonstrated?"],
+"Clause 6 - Planning":["Risks identified?","Opportunities identified?","Risk actions planned?","Objectives measurable?","Objectives monitored?","Change controlled?","Contingency planning defined?","Planning integrated?"],
+"Clause 7 - Support":["Competence defined?","Training provided?","Awareness ensured?","Communication defined?","Document control implemented?","Version control maintained?","Infrastructure maintained?","Equipment calibrated?"],
+"Clause 8 - Operation":["Operational controls defined?","Work instructions available?","Customer requirements reviewed?","Design control implemented?","Supplier evaluation done?","Supplier performance monitored?","Traceability maintained?","Nonconforming output controlled?"],
+"Clause 9 - Performance":["KPIs defined?","KPIs monitored?","Customer satisfaction measured?","Internal audit conducted?","Audit findings recorded?","Management review conducted?","Review outputs documented?","Trends analyzed?"],
+"Clause 10 - Improvement":["Corrective action defined?","Root cause analysis done?","Corrective actions implemented?","Effectiveness verified?","Continual improvement demonstrated?","Preventive actions identified?","Lessons learned documented?","Improvements communicated?"]
+};
+
+let formHTML="";
+for(let clause in auditData){
+formHTML+=`<div class="section"><h2>${clause}</h2>`;
+auditData[clause].forEach(q=>{
+formHTML+=`
+<div class="question">
+<strong>${q}</strong>
+<select class="score">
+<option value="2">Yes</option>
+<option value="1">Partial</option>
+<option value="0">No</option>
+</select>
+<textarea placeholder="Comments"></textarea>
+</div>`;
+});
+formHTML+=`</div>`;
+}
+document.getElementById("auditForm").innerHTML=formHTML;
+
+function generateReport(){
+let scores=document.getElementsByClassName("score");
+let comments=document.getElementsByTagName("textarea");
+
+let total=0,max=0,index=0;
+let clauseScores={};
+let majorNCR="", minorNCR="";
+
+Object.keys(auditData).forEach(c=>clauseScores[c]=0);
+
+for(let clause in auditData){
+auditData[clause].forEach(q=>{
+let score=parseInt(scores[index].value);
+total+=score; max+=2;
+clauseScores[clause]+=score;
+
+if(score===0){
+majorNCR+=`<div class="ncr-major"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
+}
+if(score===1){
+minorNCR+=`<div class="ncr-minor"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
+}
+index++;
+});
+}
+
+let percent=Math.round((total/max)*100);
+let status=percent<=40?"High Risk":percent<=70?"Needs Improvement":percent<=85?"Almost Ready":"Certification Ready";
+
+let roadmap = percent<=70 ?
+"<h4>30-60-90 Day Plan</h4><p>0-30: Define policies & risk register</p><p>30-60: Implement processes & internal audit</p><p>60-90: Management review & corrective actions</p>"
+:"Minor improvements before certification.";
+
+document.getElementById("result").style.display="block";
+document.getElementById("result").innerHTML=`
+<h3>Overall Compliance: ${percent}%</h3>
+<p>Status: ${status}</p>
+<hr>
+<h4>Major NCR</h4>${majorNCR||"None"}
+<h4>Minor NCR</h4>${minorNCR||"None"}
+<hr>${roadmap}
+`;
+
+drawChart(clauseScores);
+}
+
+function drawChart(clauseScores){
+let canvas=document.getElementById("chartCanvas");
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let clauses=Object.keys(clauseScores);
+let barWidth=80;
+let gap=30;
+
+clauses.forEach((clause,i)=>{
+let percent=Math.round((clauseScores[clause]/(auditData[clause].length*2))*100);
+let x=60+(barWidth+gap)*i;
+let height=percent*3;
+
+ctx.fillStyle="#0B3C5D";
+ctx.fillRect(x,350-height,barWidth,height);
+ctx.fillStyle="black";
+ctx.fillText(percent+"%",x,340-height);
+ctx.fillText(clause.split(" ")[1],x,370);
+});
+}
+
+function saveAudit(){
+let data={
+client:client.value,
+auditor:auditor.value,
+date:date.value,
+scope:scope.value,
+scores:[...document.getElementsByClassName("score")].map(s=>s.value),
+comments:[...document.getElementsByTagName("textarea")].map(t=>t.value)
+};
+let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="avintix_audit.json";
+a.click();
+}
+
+function loadAudit(event){
+let file=event.target.files[0];
+let reader=new FileReader();
+reader.onload=function(e){
+let data=JSON.parse(e.target.result);
+client.value=data.client;
+auditor.value=data.auditor;
+date.value=data.date;
+scope.value=data.scope;
+document.querySelectorAll(".score").forEach((s,i)=>s.value=data.scores[i]);
+document.querySelectorAll("textarea").forEach((t,i)=>t.value=data.comments[i]);
+};
+reader.readAsText(file);
+}
+
+function addDocument(){
+let row=document.getElementById("docTable").insertRow();
+row.insertCell(0).innerText=docName.value;
+row.insertCell(1).innerText=docVersion.value;
+row.insertCell(2).innerText=docOwner.value;
+row.insertCell(3).innerText=docStatus.value;
+docName.value=docVersion.value=docOwner.value=docStatus.value="";
+}
+
+function addAudit(){
+let row=document.getElementById("calendarTable").insertRow();
+row.insertCell(0).innerText=auditType.value;
+row.insertCell(1).innerText=auditDate.value;
+auditType.value=auditDate.value="";
+}
+</script>
+
 </body>
 </html>
