@@ -23,10 +23,13 @@ body{
 header{
   background:#ffffff;
   border-bottom:1px solid #e6e6e6;
-  padding:14px 0;
+  padding:24px 0;
   position:sticky;
   top:0;
   z-index:10;
+  min-height:120px;
+  display:flex;
+  align-items:center;
 }
 
 .container{
@@ -50,7 +53,11 @@ header{
   color:var(--deep-purple);
 }
 
-.logo img{height:80px;width:auto;}
+.logo img{
+  height:110px;
+  width:auto;
+  object-fit:contain;
+}
 
 .tenant{
   font-size:14px;
@@ -197,7 +204,7 @@ footer{
 <a href="#" onclick="showSection('capa')">CAPA Tracker</a>
 <a href="#" onclick="showSection('review')">Management Review</a>
 <a href="#" onclick="showSection('reports')">Reports</a>
-</div>
+</aside>
 <div class="main">
 
 <div id="dashboardSection">
