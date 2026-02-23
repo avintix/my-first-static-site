@@ -217,9 +217,21 @@ footer{
 <div id="dashboardSection">
 <div class="card">
 <h2>QMS Overview</h2>
+
+<label><strong>Select Customer:</strong></label>
+<select id="customerSelect" onchange="loadCustomer()">
+<option value="">-- Select Customer --</option>
+</select>
+<input type="text" id="newCustomer" placeholder="Add New Customer Name">
+<button onclick="addCustomer()">Add Customer</button>
+
+<hr style="margin:20px 0;">
+
 <p>Total Clauses: 7</p>
 <p>Audit Questions: 110+</p>
 <p>Maturity Model Enabled</p>
+
+<canvas id="dashboardChart" height="120"></canvas>
 </div>
 </div>
 
@@ -240,6 +252,10 @@ footer{
 </div>
 
 <div id="auditSection" style="display:none;">
+<div class="card">
+<label><strong>Customer:</strong></label>
+<div id="activeCustomer" style="font-weight:700;color:var(--deep-purple);margin-bottom:15px;">No customer selected</div>
+</div>
 <div id="auditForm"></div>
 <button onclick="generateReport()">Generate Audit Report</button>
 <div id="result" class="section" style="display:none;"></div>
@@ -353,6 +369,11 @@ formHTML+=`</div>`;
 document.getElementById("auditForm").innerHTML=formHTML;
 
 function generateReport(){
+let selectedCustomer = document.getElementById("customerSelect").value;
+if(!selectedCustomer){
+alert("Please select a customer before generating report.");
+return;
+}
 let scores=document.getElementsByClassName("score");
 let comments=document.getElementsByTagName("textarea");
 let total=0,max=0,index=0;
@@ -410,6 +431,10 @@ for(let clause in auditData){
 }
 
 document.getElementById("result").style.display="block";
+// Save results per customer
+localStorage.setItem("audit_"+selectedCustomer, JSON.stringify({percent, maturity}));
+updateDashboardChart();
+
 document.getElementById("result").innerHTML=`
 <h2>Audit Summary</h2>
 <p><strong>Compliance Score:</strong> ${percent}%</p>
@@ -423,6 +448,57 @@ ${clauseBreakdown}
 `;
 }
 
+
+// ---------------- CUSTOMER MANAGEMENT ----------------
+function addCustomer(){
+let name=document.getElementById("newCustomer").value.trim();
+if(!name) return;
+let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+if(!customers.includes(name)) customers.push(name);
+localStorage.setItem("customers",JSON.stringify(customers));
+document.getElementById("newCustomer").value="";
+loadCustomers();
+}
+
+function loadCustomers(){
+let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+let select=document.getElementById("customerSelect");
+select.innerHTML='<option value="">-- Select Customer --</option>';
+customers.forEach(c=>{
+let opt=document.createElement("option");
+opt.value=c; opt.text=c;
+select.appendChild(opt);
+});
+}
+
+function loadCustomer(){
+let selected=document.getElementById("customerSelect").value;
+document.getElementById("activeCustomer").innerText = selected || "No customer selected";
+}
+
+// ---------------- DASHBOARD GRAPH ----------------
+function updateDashboardChart(){
+let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+let canvas=document.getElementById("dashboardChart");
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+let barWidth=60;
+let gap=30;
+customers.forEach((c,i)=>{
+let data=JSON.parse(localStorage.getItem("audit_"+c)||"{}");
+let percent=data.percent||0;
+let x=50+(barWidth+gap)*i;
+let height=percent;
+ctx.fillStyle="#59146f";
+ctx.fillRect(x,120-height,barWidth,height);
+ctx.fillStyle="#000";
+ctx.fillText(percent+"%",x,110-height);
+ctx.fillText(c,x,140);
+});
+}
+
+loadCustomers();
 
 </script>
 </body>
