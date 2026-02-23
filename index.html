@@ -4,26 +4,193 @@
 <meta charset="UTF-8">
 <title>Avintix Comply360 – ISO 9001 QMS Engine</title>
 <style>
-body{margin:0;font-family:Segoe UI,Arial;background:#f4f7fb;color:#1f2937;}
-.header{background:#0B3C5D;color:white;padding:10px 20px;font-size:22px;font-weight:600;display:flex;align-items:center;gap:15px;} .header img{height:40px;width:auto;}
-.sidebar{width:220px;position:fixed;top:60px;bottom:0;background:#102a43;padding-top:20px;overflow:auto;}
-.sidebar a{display:block;color:#cbd5e1;padding:12px 20px;text-decoration:none;transition:0.2s;}
-.sidebar a.active{background:#1D9BF0;color:white;font-weight:600;}
-.sidebar a:hover{background:#1D9BF0;color:white;}
-.main{margin-left:240px;padding:30px;}
-.card{background:white;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);margin-bottom:20px;}
-.section{margin-top:20px;padding:20px;background:white;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
-.question{background:#f9fbff;padding:12px;border-radius:8px;margin-bottom:10px;}
-select,textarea,input{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #d1d5db;}
-button{padding:10px 16px;margin-top:10px;background:#0B3C5D;color:white;border:none;border-radius:6px;cursor:pointer;}
-button:hover{background:#1D9BF0;}
-.ncr-major{background:#fdecea;padding:8px;border-left:5px solid #e74c3c;margin:8px 0;}
-.ncr-minor{background:#fff8e6;padding:8px;border-left:5px solid #f39c12;margin:8px 0;}
+:root {
+  --deep-purple: #59146f;
+  --magenta: #ae1d6f;
+  --bright-orange: #f37f1c;
+  --light-bg: #f7f5f9;
+  --white: #ffffff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  font-family: Inter, "Segoe UI", sans-serif;
+  background: var(--light-bg);
+  color:#090909;
+}
+
+header{
+  background:#ffffff;
+  border-bottom:1px solid #e6e6e6;
+  padding:14px 0;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:0 24px;
+}
+
+.header-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:22px;
+  font-weight:800;
+  color:var(--deep-purple);
+}
+
+.logo img{height:42px;width:auto;}
+
+.tenant{
+  font-size:14px;
+  font-weight:600;
+  color:#444;
+}
+
+.section{
+  padding:32px 0;
+}
+
+.layout{
+  display:flex;
+  gap:28px;
+  align-items:flex-start;
+}
+
+.sidebar{
+  width:280px;
+  background:#ffffff;
+  border-radius:14px;
+  padding:16px;
+  border:1px solid #ececec;
+  position:sticky;
+  top:90px;
+}
+
+.sidebar a{
+  display:block;
+  padding:10px 14px;
+  margin-bottom:8px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  text-decoration:none;
+  color:#333;
+  border:1px solid #f0f0f0;
+}
+
+.sidebar a:hover,
+.sidebar a.active{
+  background: linear-gradient(90deg, rgba(243,127,28,0.30), rgba(174,29,111,0.30));
+  color:#3d0f4f;
+  border-color: rgba(174,29,111,0.55);
+}
+
+.main{
+  flex:1;
+}
+
+.card, .section-card{
+  background:#ffffff;
+  border-radius:16px;
+  padding:28px;
+  border:1px solid #ececec;
+  margin-bottom:20px;
+}
+
+h2,h3{
+  color:var(--deep-purple);
+  margin-bottom:12px;
+}
+
+.question{
+  background:#ffffff;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid #ececec;
+  margin-bottom:12px;
+}
+
+select, textarea, input{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:1px solid #dcdcdc;
+  background:#ffffff;
+}
+
+button{
+  padding:12px 18px;
+  margin-top:12px;
+  background: linear-gradient(90deg, var(--deep-purple), var(--magenta));
+  color:#ffffff;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.ncr-major{
+  background:#ffe5e5;
+  border-left:5px solid #d11a2a;
+  padding:10px;
+  border-radius:6px;
+  margin:8px 0;
+}
+
+.ncr-minor{
+  background:#fff4e6;
+  border-left:5px solid var(--bright-orange);
+  padding:10px;
+  border-radius:6px;
+  margin:8px 0;
+}
+
+footer{
+  margin-top:40px;
+  padding:20px 0;
+  text-align:center;
+  font-size:13px;
+  color:#666;
+}
+
+@media(max-width:900px){
+  .layout{flex-direction:column;}
+  .sidebar{width:100%;position:static;}
+}
 </style>
 </head>
 <body>
-<div class="header"><img src="avintix-logo.png" alt="Avintix Logo">Avintix Comply360 – ISO 9001 Integrated QMS & DMS</div>
-<div class="sidebar">
+
+<header>
+  <div class="container">
+    <div class="header-bar">
+      <div class="logo"><img src="avintix-logo.png" alt="Avintix Logo">Avintix Comply360</div>
+      <div class="tenant" id="user">Logged in user</div>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container layout">
+
+    <aside class="sidebar">
 <a href="#" onclick="showSection('dashboard')">Dashboard</a>
 <a href="#" onclick="showSection('audit')">ISO 9001 Audit Engine</a>
 <a href="#" onclick="showSection('dms')">Document Management</a>
@@ -195,6 +362,15 @@ let maturity=percent<=40?"Initial":percent<=60?"Defined":percent<=75?"Managed":p
 document.getElementById("result").style.display="block";
 document.getElementById("result").innerHTML=`<h2>Audit Summary</h2><p><strong>Compliance Score:</strong> ${percent}%</p><p><strong>Maturity Level:</strong> ${maturity}</p><h3>Major NCR</h3>${major||"None"}<h3>Minor NCR</h3>${minor||"None"}`;
 }
+fetch('/.auth/me')
+  .then(res => res.json())
+  .then(data => {
+    if(data && data.clientPrincipal){
+      document.getElementById("user").innerText =
+        "Logged in as: " + data.clientPrincipal.userDetails;
+    }
+  });
+
 </script>
 </body>
 </html>
