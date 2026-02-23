@@ -5,9 +5,10 @@
 <title>Avintix Comply360 – ISO 9001 QMS Engine</title>
 <style>
 body{margin:0;font-family:Segoe UI,Arial;background:#f4f7fb;color:#1f2937;}
-.header{background:#0B3C5D;color:white;padding:15px 30px;font-size:22px;font-weight:600;}
+.header{background:#0B3C5D;color:white;padding:10px 20px;font-size:22px;font-weight:600;display:flex;align-items:center;gap:15px;} .header img{height:40px;width:auto;}
 .sidebar{width:220px;position:fixed;top:60px;bottom:0;background:#102a43;padding-top:20px;overflow:auto;}
-.sidebar a{display:block;color:#cbd5e1;padding:12px 20px;text-decoration:none;}
+.sidebar a{display:block;color:#cbd5e1;padding:12px 20px;text-decoration:none;transition:0.2s;}
+.sidebar a.active{background:#1D9BF0;color:white;font-weight:600;}
 .sidebar a:hover{background:#1D9BF0;color:white;}
 .main{margin-left:240px;padding:30px;}
 .card{background:white;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);margin-bottom:20px;}
@@ -21,22 +22,27 @@ button:hover{background:#1D9BF0;}
 </style>
 </head>
 <body>
-<div class="header">Avintix Comply360 – ISO 9001 Integrated QMS & DMS</div>
+<div class="header"><img src="avintix-logo.png" alt="Avintix Logo">Avintix Comply360 – ISO 9001 Integrated QMS & DMS</div>
 <div class="sidebar">
-<a href="#">Dashboard</a>
-<a href="#">ISO 9001 Audit Engine</a>
-<a href="#">Document Management</a>
-<a href="#">CAPA Tracker</a>
-<a href="#">Management Review</a>
-<a href="#">Reports</a>
+<a href="#" onclick="showSection('dashboard')">Dashboard</a>
+<a href="#" onclick="showSection('audit')">ISO 9001 Audit Engine</a>
+<a href="#" onclick="showSection('dms')">Document Management</a>
+<a href="#" onclick="showSection('capa')">CAPA Tracker</a>
+<a href="#" onclick="showSection('review')">Management Review</a>
+<a href="#" onclick="showSection('reports')">Reports</a>
 </div>
 <div class="main">
+
+<div id="dashboardSection">
 <div class="card">
 <h2>QMS Overview</h2>
 <p>Total Clauses: 7</p>
 <p>Audit Questions: 110+</p>
 <p>Maturity Model Enabled</p>
 </div>
+</div>
+
+<div id="dmsSection" style="display:none;">
 <div class="card">
 <h2>Document Management System (DMS)</h2>
 <input placeholder="Document Title">
@@ -50,11 +56,51 @@ button:hover{background:#1D9BF0;}
 </select>
 <button>Add Document</button>
 </div>
+</div>
+
+<div id="auditSection" style="display:none;">
 <div id="auditForm"></div>
 <button onclick="generateReport()">Generate Audit Report</button>
 <div id="result" class="section" style="display:none;"></div>
 </div>
+
+<div id="capaSection" style="display:none;">
+<div class="card"><h2>CAPA Tracker</h2><p>CAPA workflow module coming next.</p></div>
+</div>
+
+<div id="reviewSection" style="display:none;">
+<div class="card"><h2>Management Review</h2><p>Management review module coming next.</p></div>
+</div>
+
+<div id="reportsSection" style="display:none;">
+<div class="card"><h2>Reports</h2><p>Advanced reporting dashboard coming next.</p></div>
+</div>
+
+</div>
 <script>
+
+function showSection(section){
+const sections={
+'dashboard':'dashboardSection',
+'audit':'auditSection',
+'dms':'dmsSection',
+'capa':'capaSection',
+'review':'reviewSection',
+'reports':'reportsSection'
+};
+
+for(let key in sections){
+document.getElementById(sections[key]).style.display='none';
+}
+
+document.getElementById(sections[section]).style.display='block';
+
+// Active tab highlight
+let links=document.querySelectorAll('.sidebar a');
+links.forEach(link=>link.classList.remove('active'));
+event.target.classList.add('active');
+}
+
 const criticalQuestions=[
 "Is QMS scope documented?",
 "Is internal audit program established?",
