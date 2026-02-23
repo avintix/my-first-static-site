@@ -2,215 +2,123 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Avintix Compliance – ISO 9001 Internal CMS</title>
-
+<title>Avintix Comply360 – ISO 9001 QMS Engine</title>
 <style>
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #F4F7FB;
-    margin: 0;
-    padding: 20px;
-    color: #1f2937;
-}
-
-.container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    max-width: 1400px;
-    margin: auto;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-h1 {
-    text-align: center;
-    color: #0B3C5D;
-    margin-bottom: 30px;
-}
-
-h2 {
-    color: #0B3C5D;
-    margin-bottom: 15px;
-}
-
-.section {
-    margin-top: 25px;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border-left: 6px solid #1D9BF0;
-}
-
-.question {
-    margin: 15px 0;
-    padding: 12px;
-    background: #f9fbff;
-    border-radius: 8px;
-}
-
-select, textarea, input {
-    margin-top: 6px;
-    width: 100%;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-}
-
-textarea { height: 60px; }
-
-button {
-    padding: 10px 16px;
-    margin: 10px 8px 0 0;
-    background: #0B3C5D;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.3s ease;
-    font-weight: 500;
-}
-
-button:hover { background: #1D9BF0; }
-
-.result {
-    margin-top: 25px;
-    padding: 20px;
-    background: #E8F8F2;
-    border-radius: 10px;
-    border-left: 6px solid #2ECC71;
-}
-
-.ncr-major {
-    background: #FDECEA;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border-left: 6px solid #E74C3C;
-}
-
-.ncr-minor {
-    background: #FFF8E6;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border-left: 6px solid #F39C12;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-table th {
-    background: #0B3C5D;
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-table td {
-    padding: 10px;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-table tr:hover { background: #f3f8ff; }
-
-canvas {
-    background: white;
-    margin-top: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+body{margin:0;font-family:Segoe UI,Arial;background:#f4f7fb;color:#1f2937;}
+.header{background:#0B3C5D;color:white;padding:15px 30px;font-size:22px;font-weight:600;}
+.sidebar{width:220px;position:fixed;top:60px;bottom:0;background:#102a43;padding-top:20px;overflow:auto;}
+.sidebar a{display:block;color:#cbd5e1;padding:12px 20px;text-decoration:none;}
+.sidebar a:hover{background:#1D9BF0;color:white;}
+.main{margin-left:240px;padding:30px;}
+.card{background:white;padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);margin-bottom:20px;}
+.section{margin-top:20px;padding:20px;background:white;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+.question{background:#f9fbff;padding:12px;border-radius:8px;margin-bottom:10px;}
+select,textarea,input{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #d1d5db;}
+button{padding:10px 16px;margin-top:10px;background:#0B3C5D;color:white;border:none;border-radius:6px;cursor:pointer;}
+button:hover{background:#1D9BF0;}
+.ncr-major{background:#fdecea;padding:8px;border-left:5px solid #e74c3c;margin:8px 0;}
+.ncr-minor{background:#fff8e6;padding:8px;border-left:5px solid #f39c12;margin:8px 0;}
 </style>
 </head>
 <body>
-
-<div class="container">
-
-<h1>Avintix Compliance – ISO 9001 Internal CMS</h1>
-
-<!-- HEADER -->
-<div class="section">
-<h2>Audit Information</h2>
-<label>Client Name:</label>
-<input type="text" id="client">
-<label>Auditor Name:</label>
-<input type="text" id="auditor">
-<label>Audit Date:</label>
-<input type="date" id="date">
-<label>Scope:</label>
-<input type="text" id="scope">
+<div class="header">Avintix Comply360 – ISO 9001 Integrated QMS & DMS</div>
+<div class="sidebar">
+<a href="#">Dashboard</a>
+<a href="#">ISO 9001 Audit Engine</a>
+<a href="#">Document Management</a>
+<a href="#">CAPA Tracker</a>
+<a href="#">Management Review</a>
+<a href="#">Reports</a>
 </div>
-
-<!-- AUDIT ENGINE -->
+<div class="main">
+<div class="card">
+<h2>QMS Overview</h2>
+<p>Total Clauses: 7</p>
+<p>Audit Questions: 110+</p>
+<p>Maturity Model Enabled</p>
+</div>
+<div class="card">
+<h2>Document Management System (DMS)</h2>
+<input placeholder="Document Title">
+<input placeholder="Document ID">
+<input placeholder="Version">
+<input placeholder="Owner">
+<select>
+<option>Draft</option>
+<option>Approved</option>
+<option>Obsolete</option>
+</select>
+<button>Add Document</button>
+</div>
 <div id="auditForm"></div>
-
-<button onclick="generateReport()">Generate Report</button>
-<button onclick="saveAudit()">Save Audit</button>
-<input type="file" onchange="loadAudit(event)">
-<button onclick="window.print()">Print / Save as PDF</button>
-
-<div id="result" class="result" style="display:none;"></div>
-
-<!-- DASHBOARD -->
-<div class="section">
-<h2>Compliance Dashboard</h2>
-<canvas id="chartCanvas" width="1000" height="400"></canvas>
+<button onclick="generateReport()">Generate Audit Report</button>
+<div id="result" class="section" style="display:none;"></div>
 </div>
-
-<!-- DOCUMENT TRACKER -->
-<div class="section">
-<h2>Document Tracker</h2>
-<input type="text" id="docName" placeholder="Document Name">
-<input type="text" id="docVersion" placeholder="Version">
-<input type="text" id="docOwner" placeholder="Owner">
-<input type="text" id="docStatus" placeholder="Status">
-<button onclick="addDocument()">Add Document</button>
-<table id="docTable">
-<tr><th>Name</th><th>Version</th><th>Owner</th><th>Status</th></tr>
-</table>
-</div>
-
-<!-- AUDIT CALENDAR -->
-<div class="section">
-<h2>Audit Calendar</h2>
-<input type="text" id="auditType" placeholder="Audit Type">
-<input type="date" id="auditDate">
-<button onclick="addAudit()">Add Audit</button>
-<table id="calendarTable">
-<tr><th>Audit Type</th><th>Date</th></tr>
-</table>
-</div>
-
-</div>
-
 <script>
-const auditData = {
-"Clause 4 - Context":["Scope defined?","Internal issues identified?","External issues identified?","Interested parties identified?","Needs monitored?","Processes defined?","Process interaction defined?","Outsourced processes controlled?"],
-"Clause 5 - Leadership":["Quality policy established?","Policy communicated?","Customer focus demonstrated?","Roles assigned?","Accountability defined?","Resources provided?","Policy reviewed?","Compliance commitment demonstrated?"],
-"Clause 6 - Planning":["Risks identified?","Opportunities identified?","Risk actions planned?","Objectives measurable?","Objectives monitored?","Change controlled?","Contingency planning defined?","Planning integrated?"],
-"Clause 7 - Support":["Competence defined?","Training provided?","Awareness ensured?","Communication defined?","Document control implemented?","Version control maintained?","Infrastructure maintained?","Equipment calibrated?"],
-"Clause 8 - Operation":["Operational controls defined?","Work instructions available?","Customer requirements reviewed?","Design control implemented?","Supplier evaluation done?","Supplier performance monitored?","Traceability maintained?","Nonconforming output controlled?"],
-"Clause 9 - Performance":["KPIs defined?","KPIs monitored?","Customer satisfaction measured?","Internal audit conducted?","Audit findings recorded?","Management review conducted?","Review outputs documented?","Trends analyzed?"],
-"Clause 10 - Improvement":["Corrective action defined?","Root cause analysis done?","Corrective actions implemented?","Effectiveness verified?","Continual improvement demonstrated?","Preventive actions identified?","Lessons learned documented?","Improvements communicated?"]
+const criticalQuestions=[
+"Is QMS scope documented?",
+"Is internal audit program established?",
+"Is management review conducted at planned intervals?",
+"Are corrective actions implemented effectively?",
+"Is documented information controlled?"
+];
+
+const auditData={
+
+// Each question can optionally include example evidence guidance
+// Format: {q:"Question text", evidence:"Example evidence..."}
+
+"Clause 4 - Context":[
+{q:"Is QMS scope documented?",evidence:"Evidence: Approved QMS Scope document, Quality Manual, Scope statement published on website."},
+{q:"Are internal issues identified?",evidence:"Evidence: SWOT analysis, internal context analysis report."},
+{q:"Are external issues identified?",evidence:"Evidence: PESTLE analysis, regulatory tracker, market analysis."},
+{q:"Are interested parties determined?",evidence:"Evidence: Interested Parties Register, stakeholder matrix."},
+{q:"Are QMS processes defined?",evidence:"Evidence: Process maps, SOP index, process interaction diagram."},
+{q:"Are outsourced processes controlled?",evidence:"Evidence: Outsourcing register, vendor agreements, SLA."},
+{q:"Is SWOT analysis performed?",evidence:"Evidence: Documented SWOT report reviewed annually."},
+{q:"Are exclusions justified?",evidence:"Evidence: Clause exclusion justification record."},
+{q:"Is scope reviewed periodically?",evidence:"Evidence: Management Review minutes showing scope review."},
+{q:"Are regulatory requirements identified?",evidence:"Evidence: Compliance obligation register."},
+{q:"Are process interactions mapped?",evidence:"Evidence: Process interaction flowchart."},
+{q:"Is business environment monitored?",evidence:"Evidence: Strategy review reports."},
+{q:"Are strategic objectives aligned with QMS?",evidence:"Evidence: Business plan aligned with quality objectives."},
+{q:"Are stakeholder needs monitored?",evidence:"Evidence: Stakeholder feedback logs."},
+{q:"Is compliance obligation tracked?",evidence:"Evidence: Legal compliance tracker."}
+],
+"Clause 5 - Leadership":[
+"Is quality policy established?","Is policy communicated?","Is customer focus demonstrated?","Are roles assigned?","Is accountability defined?","Are resources provided?","Is QMS integrated into business processes?","Is leadership promoting risk-based thinking?","Is continual improvement promoted?","Is management review conducted at planned intervals?","Is compliance commitment demonstrated?","Are authorities communicated?","Is ethical conduct enforced?","Is policy reviewed periodically?","Are objectives aligned with policy?"
+],
+"Clause 6 - Planning":[
+"Are risks identified?","Is risk methodology defined?","Is risk register maintained?","Are opportunities identified?","Are mitigation plans defined?","Are risk owners assigned?","Are objectives measurable?","Are objectives monitored?","Are changes planned systematically?","Is contingency planning defined?","Are legal risks assessed?","Is business continuity aligned?","Are resources allocated?","Are objectives communicated?","Are objectives updated?"
+],
+"Clause 7 - Support":[
+"Are competencies defined?","Are training needs identified?","Is training provided?","Is training effectiveness evaluated?","Is awareness ensured?","Is internal communication defined?","Is external communication defined?","Is documented information controlled?","Is version control maintained?","Is document approval defined?","Is infrastructure maintained?","Is equipment calibrated?","Is IT secured?","Is knowledge management maintained?","Are records retained per policy?"
+],
+"Clause 8 - Operation":[
+"Are operational controls defined?","Are work instructions available?","Are customer requirements reviewed?","Is contract review documented?","Is design control implemented?","Are suppliers evaluated?","Is supplier performance monitored?","Is purchase control defined?","Is service delivery controlled?","Is traceability maintained?","Is nonconforming output controlled?","Is rework controlled?","Is release authorization defined?","Is change control implemented?","Are acceptance criteria defined?","Is post-delivery activity managed?","Is customer property protected?","Is production monitored?","Are process validations performed?","Is complaint handling defined?"
+],
+"Clause 9 - Performance":[
+"Are KPIs defined?","Are KPIs monitored?","Is customer satisfaction measured?","Are complaints tracked?","Is internal audit program established?","Are audit findings addressed?","Are trends analyzed?","Is management review agenda defined?","Are review inputs defined?","Are review outputs documented?","Are improvement opportunities identified?","Is data-driven decision making implemented?","Is benchmarking conducted?","Are audit reports retained?","Are KPIs reviewed by management?"
+],
+"Clause 10 - Improvement":[
+"Is corrective action procedure defined?","Are root cause analyses conducted?","Are corrective actions implemented effectively?","Is effectiveness verified?","Are preventive measures identified?","Is continual improvement demonstrated?","Are lessons learned documented?","Are improvement initiatives tracked?","Are nonconformities recorded?","Are repeat issues analyzed?","Is customer feedback used for improvement?","Are innovation initiatives encouraged?","Is QMS updated after changes?","Are improvements documented?","Is improvement culture promoted?"
+]
 };
 
 let formHTML="";
 for(let clause in auditData){
-formHTML+=`<div class="section"><h2>${clause}</h2>`;
-auditData[clause].forEach(q=>{
-formHTML+=`
-<div class="question">
-<strong>${q}</strong>
+formHTML+=`<div class="section"><h3>${clause}</h3>`;
+auditData[clause].forEach(item=>{
+let questionText = typeof item === 'string' ? item : item.q;
+let evidenceText = typeof item === 'string' ? '' : item.evidence;
+formHTML+=`<div class="question"><strong>${questionText}</strong>
+${evidenceText ? `<div style="font-size:12px;color:#475569;margin-top:6px;"><em>${evidenceText}</em></div>` : ''}
 <select class="score">
-<option value="2">Yes</option>
-<option value="1">Partial</option>
-<option value="0">No</option>
+<option value="2">Compliant</option>
+<option value="1">Partially Compliant</option>
+<option value="0">Non-Compliant</option>
 </select>
-<textarea placeholder="Comments"></textarea>
+<textarea placeholder="Audit Evidence / Comments"></textarea>
 </div>`;
 });
 formHTML+=`</div>`;
@@ -220,118 +128,27 @@ document.getElementById("auditForm").innerHTML=formHTML;
 function generateReport(){
 let scores=document.getElementsByClassName("score");
 let comments=document.getElementsByTagName("textarea");
-
 let total=0,max=0,index=0;
-let clauseScores={};
-let majorNCR="", minorNCR="";
-
-Object.keys(auditData).forEach(c=>clauseScores[c]=0);
-
+let major="",minor="";
 for(let clause in auditData){
-auditData[clause].forEach(q=>{
+auditData[clause].forEach(item=>{
+let questionText = typeof item === 'string' ? item : item.q;
 let score=parseInt(scores[index].value);
-total+=score; max+=2;
-clauseScores[clause]+=score;
-
+total+=score;max+=2;
 if(score===0){
-majorNCR+=`<div class="ncr-major"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
-}
-if(score===1){
-minorNCR+=`<div class="ncr-minor"><b>${clause}</b>: ${q}<br>${comments[index].value}</div>`;
-}
+if(criticalQuestions.includes(questionText)){
+major+=`<div class="ncr-major"><b>Major NCR:</b> ${questionText}<br>${comments[index].value}</div>`;
+}else{
+minor+=`<div class="ncr-minor"><b>Minor NCR:</b> ${questionText}<br>${comments[index].value}</div>`;
+}}
+if(score===1){minor+=`<div class="ncr-minor"><b>Minor NCR:</b> ${questionText}<br>${comments[index].value}</div>`;}
 index++;
-});
-}
-
+});}
 let percent=Math.round((total/max)*100);
-let status=percent<=40?"High Risk":percent<=70?"Needs Improvement":percent<=85?"Almost Ready":"Certification Ready";
-
-let roadmap = percent<=70 ?
-"<h4>30-60-90 Day Plan</h4><p>0-30: Define policies & risk register</p><p>30-60: Implement processes & internal audit</p><p>60-90: Management review & corrective actions</p>"
-:"Minor improvements before certification.";
-
+let maturity=percent<=40?"Initial":percent<=60?"Defined":percent<=75?"Managed":percent<=90?"Optimized":"Certification Ready";
 document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=`
-<h3>Overall Compliance: ${percent}%</h3>
-<p>Status: ${status}</p>
-<hr>
-<h4>Major NCR</h4>${majorNCR||"None"}
-<h4>Minor NCR</h4>${minorNCR||"None"}
-<hr>${roadmap}
-`;
-
-drawChart(clauseScores);
-}
-
-function drawChart(clauseScores){
-let canvas=document.getElementById("chartCanvas");
-let ctx=canvas.getContext("2d");
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-let clauses=Object.keys(clauseScores);
-let barWidth=80;
-let gap=30;
-
-clauses.forEach((clause,i)=>{
-let percent=Math.round((clauseScores[clause]/(auditData[clause].length*2))*100);
-let x=60+(barWidth+gap)*i;
-let height=percent*3;
-
-ctx.fillStyle="#0B3C5D";
-ctx.fillRect(x,350-height,barWidth,height);
-ctx.fillStyle="black";
-ctx.fillText(percent+"%",x,340-height);
-ctx.fillText(clause.split(" ")[1],x,370);
-});
-}
-
-function saveAudit(){
-let data={
-client:client.value,
-auditor:auditor.value,
-date:date.value,
-scope:scope.value,
-scores:[...document.getElementsByClassName("score")].map(s=>s.value),
-comments:[...document.getElementsByTagName("textarea")].map(t=>t.value)
-};
-let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="avintix_audit.json";
-a.click();
-}
-
-function loadAudit(event){
-let file=event.target.files[0];
-let reader=new FileReader();
-reader.onload=function(e){
-let data=JSON.parse(e.target.result);
-client.value=data.client;
-auditor.value=data.auditor;
-date.value=data.date;
-scope.value=data.scope;
-document.querySelectorAll(".score").forEach((s,i)=>s.value=data.scores[i]);
-document.querySelectorAll("textarea").forEach((t,i)=>t.value=data.comments[i]);
-};
-reader.readAsText(file);
-}
-
-function addDocument(){
-let row=document.getElementById("docTable").insertRow();
-row.insertCell(0).innerText=docName.value;
-row.insertCell(1).innerText=docVersion.value;
-row.insertCell(2).innerText=docOwner.value;
-row.insertCell(3).innerText=docStatus.value;
-docName.value=docVersion.value=docOwner.value=docStatus.value="";
-}
-
-function addAudit(){
-let row=document.getElementById("calendarTable").insertRow();
-row.insertCell(0).innerText=auditType.value;
-row.insertCell(1).innerText=auditDate.value;
-auditType.value=auditDate.value="";
+document.getElementById("result").innerHTML=`<h2>Audit Summary</h2><p><strong>Compliance Score:</strong> ${percent}%</p><p><strong>Maturity Level:</strong> ${maturity}</p><h3>Major NCR</h3>${major||"None"}<h3>Minor NCR</h3>${minor||"None"}`;
 }
 </script>
-
 </body>
 </html>
