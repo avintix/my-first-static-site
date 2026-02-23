@@ -184,6 +184,29 @@ buildAuditForm();
 
 /* ---------------- CUSTOMER ---------------- */
 window.createCustomer=function(){
+
+let name=document.getElementById("customerName").value.trim();
+if(!name)return;
+
+let d=getData();
+
+if(!d.customers[name]){
+    d.customers[name]={versions:[]};
+}
+
+saveData(d);
+populateCustomers();
+
+// Auto-select newly created customer
+document.getElementById("customerDropdown").value=name;
+
+// Clear input
+document.getElementById("customerName").value="";
+
+// Switch to Audit tab
+showSection("audit");
+
+}
 let name=document.getElementById("customerName").value.trim();
 if(!name)return;
 let d=getData();
