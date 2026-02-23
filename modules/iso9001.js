@@ -1,17 +1,5 @@
-// ISO 9001 Module
-
 export const iso9001 = {
   name: "ISO 9001",
-
-  weights: {
-    "4":1.1,
-    "5":1.3,
-    "6":1.4,
-    "7":1.0,
-    "8":1.3,
-    "9":1.2,
-    "10":1.3
-  },
 
   questions: [
     {
@@ -33,7 +21,7 @@ export const iso9001 = {
       title:"Risk Planning",
       question:"Are risks and opportunities identified and addressed?",
       evidence:"Risk register",
-      example:"Risk log with mitigation tracking"
+      example:"Risk mitigation log"
     }
   ]
 };
