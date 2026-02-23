@@ -244,16 +244,44 @@ footer{
 <div id="dmsSection" style="display:none;">
 <div class="card">
 <h2>Document Management System (DMS)</h2>
-<input placeholder="Document Title">
-<input placeholder="Document ID">
-<input placeholder="Version">
-<input placeholder="Owner">
-<select>
+
+<label>Document Title</label>
+<input id="docTitle" placeholder="Document Title">
+
+<label>Document ID</label>
+<input id="docId" placeholder="Document ID">
+
+<label>Version</label>
+<input id="docVersion" placeholder="Version">
+
+<label>Owner</label>
+<input id="docOwner" placeholder="Owner">
+
+<label>Status</label>
+<select id="docStatus">
 <option>Draft</option>
 <option>Approved</option>
 <option>Obsolete</option>
 </select>
-<button>Add Document</button>
+
+<button onclick="addDocument()">Add Document</button>
+
+<hr style="margin:20px 0;">
+
+<h3>Document Register</h3>
+<table id="docTable" style="width:100%;border-collapse:collapse;">
+<thead>
+<tr style="background:#f3f3f3;">
+<th style="padding:8px;border:1px solid #ddd;">Title</th>
+<th style="padding:8px;border:1px solid #ddd;">Doc ID</th>
+<th style="padding:8px;border:1px solid #ddd;">Version</th>
+<th style="padding:8px;border:1px solid #ddd;">Owner</th>
+<th style="padding:8px;border:1px solid #ddd;">Status</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
 </div>
 </div>
 
@@ -265,7 +293,10 @@ footer{
 <div id="auditForm"></div>
 <button onclick="generateReport()">Generate Audit Report</button>
 <div id="result" class="section" style="display:none;">
-<canvas id="summaryChart" height="120" style="margin-bottom:20px;"></canvas>
+<div id="summaryVisuals" style="display:flex;gap:40px;align-items:center;margin-bottom:30px;flex-wrap:wrap;">
+  <canvas id="radarChart" width="420" height="320"></canvas>
+  <canvas id="ncrPieChart" width="320" height="320"></canvas>
+</div>
 <button onclick="printReport()" style="margin-bottom:20px;">Download PDF</button></div>
 </div>
 
@@ -442,37 +473,87 @@ document.getElementById("result").style.display="block";
 // Save results per customer
 localStorage.setItem("audit_"+selectedCustomer, JSON.stringify({percent, maturity}));
 updateDashboardChart();
-drawSummaryChart(percent);
+
+drawRadarChart(scores);
+drawNCRPieChart(majorCount, minorCount);
+
+let minorCount = (minor.match(/Minor NCR:/g) || []).length;
+let majorCount = (major.match(/Major NCR:/g) || []).length;
+
+let executiveSummary = `Overall compliance is ${percent}%. The organization is currently at \"${maturity}\" maturity level. ${majorCount>0?"Critical gaps require immediate leadership attention.":"No major gaps identified."} ${minorCount>0?"There are "+minorCount+" minor gaps that should be addressed to strengthen system effectiveness.":"System demonstrates strong compliance across all clauses."}`;
 
 document.getElementById("result").innerHTML=`
-<canvas id="summaryChart" height="120" style="margin-bottom:20px;"></canvas>
-<button onclick="printReport()" style="margin-bottom:20px;">Download PDF</button>
+<div style="display:flex;gap:30px;flex-wrap:wrap;margin-bottom:25px;">
+  <div style="flex:1;min-width:220px;background:#ffffff;border:1px solid #ececec;border-radius:14px;padding:20px;text-align:center;">
+    <h3 style="color:#59146f;">Compliance Score</h3>
+    <div style="font-size:36px;font-weight:800;color:${riskColor};">${percent}%</div>
+    <div style="margin-top:8px;font-weight:600;">${maturity}</div>
+  </div>
+  <div style="flex:1;min-width:180px;background:#ffffff;border:1px solid #ececec;border-radius:14px;padding:20px;text-align:center;">
+    <h3 style="color:#59146f;">Major NCR</h3>
+    <div style="font-size:32px;font-weight:800;color:#d11a2a;">${majorCount}</div>
+  </div>
+  <div style="flex:1;min-width:180px;background:#ffffff;border:1px solid #ececec;border-radius:14px;padding:20px;text-align:center;">
+    <h3 style="color:#59146f;">Minor NCR</h3>
+    <div style="font-size:32px;font-weight:800;color:#f37f1c;">${minorCount}</div>
+  </div>
+</div>
 
-<h2>Audit Summary</h2>
-<p><strong>Compliance Score:</strong> ${percent}%</p>
-<p><strong>Maturity Level:</strong> <span style="color:${riskColor};font-weight:700;">${maturity}</span></p>
-<hr>
-<h3>Clause Performance</h3>
-${clauseBreakdown}
-<hr>
-<h3>Major NCR</h3>${major||"None"}
-<h3>Minor NCR</h3>${minor||"None"}
+<div style="background:#ffffff;border:1px solid #ececec;border-radius:14px;padding:20px;margin-bottom:25px;">
+  <h3 style="color:#59146f;">Executive Summary</h3>
+  <p style="margin-top:10px;line-height:1.6;">${executiveSummary}</p>
+</div>
+
+<div id="summaryVisuals" style="display:flex;gap:40px;align-items:center;margin-bottom:25px;flex-wrap:wrap;">
+<canvas id="summaryChart" width="220" height="220"></canvas>
+<canvas id="clauseBarChart" width="500" height="220"></canvas>
+</div>
+
+<div style="margin-bottom:20px;">
+<button onclick="printReport()">Download PDF</button>
+</div>
+
+<h3 style="color:#59146f;">Major NCR Details</h3>
+${major||"<p>None</p>"}
+
+<h3 style="color:#59146f;margin-top:20px;">Minor NCR Details</h3>
+<div style="max-height:250px;overflow:auto;border:1px solid #ececec;border-radius:10px;padding:15px;background:#fafafa;">
+${minor||"<p>None</p>"}
+</div>
 `;
 }
 
 
 // ---------------- CUSTOMER MANAGEMENT ----------------
 function addCustomer(){
-let name=document.getElementById("newCustomer").value.trim();
-if(!name) return;
-let customers=JSON.parse(localStorage.getItem("customers")||"[]");
-if(!customers.includes(name)) customers.push(name);
-localStorage.setItem("customers",JSON.stringify(customers));
-document.getElementById("newCustomer").value="";
-loadCustomers();
+  let name=document.getElementById("newCustomer").value.trim();
+  if(!name) return;
+  let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+  if(!customers.includes(name)) customers.push(name);
+  localStorage.setItem("customers",JSON.stringify(customers));
+  document.getElementById("newCustomer").value="";
+  loadCustomers();
 }
 
 function loadCustomers(){
+  let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+  let select=document.getElementById("customerSelect");
+  select.innerHTML='<option value="">-- Select Customer --</option>';
+  customers.forEach(c=>{
+    let opt=document.createElement("option");
+    opt.value=c; opt.text=c;
+    select.appendChild(opt);
+  });
+}
+
+function loadCustomer(){
+  let selected=document.getElementById("customerSelect").value;
+  let label=document.getElementById("activeCustomer");
+  if(label) label.innerText = selected || "No customer selected";
+  if(selected) loadDocuments(selected);
+}
+
+// ---------------- DMS DOCUMENT STORAGE ----------------(){
 let customers=JSON.parse(localStorage.getItem("customers")||"[]");
 let select=document.getElementById("customerSelect");
 select.innerHTML='<option value="">-- Select Customer --</option>';
@@ -489,33 +570,75 @@ document.getElementById("activeCustomer").innerText = selected || "No customer s
 }
 
 // ---------------- DASHBOARD GRAPH ----------------
-function drawSummaryChart(percent){
-let canvas=document.getElementById("summaryChart");
-if(!canvas) return;
-let ctx=canvas.getContext("2d");
-ctx.clearRect(0,0,canvas.width,canvas.height);
 
-// Circular progress
-let centerX=150;
-let centerY=80;
-let radius=60;
-let endAngle=(percent/100)*2*Math.PI;
+}
 
-ctx.beginPath();
-ctx.arc(centerX,centerY,radius,0,2*Math.PI);
-ctx.strokeStyle="#e6e6e6";
-ctx.lineWidth=12;
-ctx.stroke();
+function drawRadarChart(scores){
+  let canvas=document.getElementById("radarChart");
+  if(!canvas) return;
+  let ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-ctx.beginPath();
-ctx.arc(centerX,centerY,radius,-Math.PI/2,endAngle-Math.PI/2);
-ctx.strokeStyle="#59146f";
-ctx.lineWidth=12;
-ctx.stroke();
+  let clauses=Object.keys(auditData);
+  let centerX=210;
+  let centerY=160;
+  let radius=120;
 
-ctx.font="18px Inter";
-ctx.fillStyle="#59146f";
-ctx.fillText(percent+"%",centerX-20,centerY+5);
+  ctx.strokeStyle="#ddd";
+  for(let i=1;i<=5;i++){
+    ctx.beginPath();
+    ctx.arc(centerX,centerY,(radius/5)*i,0,2*Math.PI);
+    ctx.stroke();
+  }
+
+  let idx=0;
+  ctx.beginPath();
+  clauses.forEach((clause,i)=>{
+    let clauseScore=0;
+    let clauseMax=auditData[clause].length*2;
+    auditData[clause].forEach(()=>{
+      clauseScore+=parseInt(scores[idx].value);
+      idx++;
+    });
+    let percent=(clauseScore/clauseMax);
+    let angle=(2*Math.PI/clauses.length)*i - Math.PI/2;
+    let x=centerX+Math.cos(angle)*radius*percent;
+    let y=centerY+Math.sin(angle)*radius*percent;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle="rgba(89,20,111,0.4)";
+  ctx.fill();
+  ctx.strokeStyle="#59146f";
+  ctx.stroke();
+}
+
+function drawNCRPieChart(majorCount, minorCount){
+  let canvas=document.getElementById("ncrPieChart");
+  if(!canvas) return;
+  let ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  let total=majorCount+minorCount || 1;
+  let start=0;
+  let majorAngle=(majorCount/total)*2*Math.PI;
+
+  ctx.beginPath();
+  ctx.moveTo(160,160);
+  ctx.arc(160,160,120,start,start+majorAngle);
+  ctx.fillStyle="#d11a2a";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(160,160);
+  ctx.arc(160,160,120,start+majorAngle,2*Math.PI);
+  ctx.fillStyle="#f37f1c";
+  ctx.fill();
+
+  ctx.fillStyle="#333";
+  ctx.font="16px Inter";
+  ctx.fillText("Major: "+majorCount,20,20);
+  ctx.fillText("Minor: "+minorCount,20,40);
 }
 
 function printReport(){
@@ -523,27 +646,38 @@ window.print();
 }
 
 function updateDashboardChart(){
-let customers=JSON.parse(localStorage.getItem("customers")||"[]");
-let canvas=document.getElementById("dashboardChart");
-let ctx=canvas.getContext("2d");
-ctx.clearRect(0,0,canvas.width,canvas.height);
+  let customers=JSON.parse(localStorage.getItem("customers")||"[]");
+  let canvas=document.getElementById("dashboardChart");
+  if(!canvas) return;
+  let ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
 
-let barWidth=60;
-let gap=30;
-customers.forEach((c,i)=>{
-let data=JSON.parse(localStorage.getItem("audit_"+c)||"{}");
-let percent=data.percent||0;
-let x=50+(barWidth+gap)*i;
-let height=percent;
-ctx.fillStyle="#59146f";
-ctx.fillRect(x,120-height,barWidth,height);
-ctx.fillStyle="#000";
-ctx.fillText(percent+"%",x,110-height);
-ctx.fillText(c,x,140);
-});
+  let maxHeight=100;
+  let barWidth=50;
+  let gap=40;
+
+  customers.forEach((c,i)=>{
+    let data=JSON.parse(localStorage.getItem("audit_"+c)||"{}");
+    let percent=data.percent||0;
+    let x=60+(barWidth+gap)*i;
+    let height=(percent/100)*maxHeight;
+
+    // background bar
+    ctx.fillStyle="#e6e6e6";
+    ctx.fillRect(x,120-maxHeight,barWidth,maxHeight);
+
+    // value bar
+    ctx.fillStyle= percent>=85 ? "#2e7d32" : percent>=60 ? "#f37f1c" : "#d11a2a";
+    ctx.fillRect(x,120-height,barWidth,height);
+
+    ctx.fillStyle="#333";
+    ctx.font="12px Inter";
+    ctx.fillText(percent+"%",x,110-height);
+    ctx.fillText(c,x,140);
+  });
 }
 
-loadCustomers();
+loadCustomers();();
 
 </script>
 </body>
