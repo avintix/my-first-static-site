@@ -12,7 +12,7 @@ display:flex;justify-content:space-between;align-items:center;
 }
 .layout{display:flex;height:calc(100vh - 60px);}
 .sidebar{
-width:220px;background:#082C45;color:white;padding-top:20px;
+width:230px;background:#082C45;color:white;padding-top:20px;
 }
 .sidebar button{
 width:90%;margin:8px 5%;padding:10px;
@@ -41,6 +41,16 @@ padding:8px 12px;border-radius:6px;margin-top:8px;
 button.primary:hover{background:#0B3C5D;}
 .section{display:none;}
 .active{display:block;}
+.scoreBox{
+display:inline-block;
+padding:15px;
+margin-right:10px;
+border-radius:8px;
+color:white;
+font-weight:bold;
+}
+.green{background:#2ECC71;}
+.blue{background:#1D9BF0;}
 </style>
 </head>
 
@@ -59,15 +69,40 @@ button.primary:hover{background:#0B3C5D;}
 <div class="layout">
 
 <div class="sidebar">
-<button onclick="showSection('audit')">Audit Engine</button>
+<button onclick="showSection('audit')">Audit</button>
+<button onclick="showSection('dashboard')">Dashboard</button>
 </div>
 
 <div class="content">
 
+<!-- AUDIT SECTION -->
 <div id="audit" class="section active">
+
+<div class="card">
+<h3>Create / Select Customer</h3>
+<input id="customerName" placeholder="New Customer Name">
+<button class="primary" onclick="createCustomer()">Create</button>
+
+<select id="customerDropdown" onchange="loadVersions()">
+<option value="">-- Select Customer --</option>
+</select>
+
+<select id="versionDropdown" onchange="renderDashboard()"></select>
+</div>
+
 <div class="card">
 <h3>Audit Questions</h3>
 <div id="auditForm"></div>
+<button class="primary" onclick="saveAudit()">Save Audit Version</button>
+</div>
+
+</div>
+
+<!-- DASHBOARD SECTION -->
+<div id="dashboard" class="section">
+<div class="card">
+<h3>Dashboard</h3>
+<div id="scoreDisplay"></div>
 </div>
 </div>
 
@@ -86,17 +121,35 @@ const modules = {
 
 let currentModule = iso9001;
 
-document.getElementById("standardSelect").addEventListener("change", (e)=>{
+/* ---------------- STORAGE ---------------- */
+
+function getData(){
+  return JSON.parse(localStorage.getItem("comply_data")) || {customers:{}};
+}
+function saveData(data){
+  localStorage.setItem("comply_data", JSON.stringify(data));
+}
+
+/* ---------------- NAV ---------------- */
+
+window.showSection = function(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ---------------- STANDARD SWITCH ---------------- */
+
+document.getElementById("standardSelect").addEventListener("change",(e)=>{
   currentModule = modules[e.target.value];
   buildAuditForm();
 });
 
+/* ---------------- BUILD QUESTIONS ---------------- */
+
 function buildAuditForm(){
 
-  let questions = currentModule.questions;
   let html = "";
-
-  questions.forEach((q,i)=>{
+  currentModule.questions.forEach((q,i)=>{
     html += `
     <div class="question">
       <b>${q.clause} – ${q.title}</b><br>
@@ -108,12 +161,11 @@ function buildAuditForm(){
       <div id="ev${i}" class="hidden"><b>Evidence:</b> ${q.evidence}</div>
       <div id="ex${i}" class="hidden"><b>Example:</b> ${q.example}</div>
 
-      <select>
+      <select class="answer">
         <option value="2">Yes</option>
         <option value="1">Partial</option>
         <option value="0">No</option>
       </select>
-
       <textarea placeholder="Comment"></textarea>
     </div>`;
   });
@@ -124,6 +176,123 @@ function buildAuditForm(){
 window.toggle = function(id){
   document.getElementById(id).classList.toggle("hidden");
 }
+
+/* ---------------- CUSTOMER ---------------- */
+
+window.createCustomer = function(){
+  let name = document.getElementById("customerName").value.trim();
+  if(!name) return;
+
+  let data = getData();
+  if(!data.customers[name]) data.customers[name] = {};
+  saveData(data);
+  populateCustomers();
+}
+
+function populateCustomers(){
+  let data = getData();
+  let dd = document.getElementById("customerDropdown");
+  dd.innerHTML = '<option value="">-- Select Customer --</option>';
+  Object.keys(data.customers).forEach(c=>{
+    let opt = document.createElement("option");
+    opt.value = c;
+    opt.text = c;
+    dd.appendChild(opt);
+  });
+}
+populateCustomers();
+
+/* ---------------- SAVE AUDIT ---------------- */
+
+window.saveAudit = function(){
+
+  let customer = document.getElementById("customerDropdown").value;
+  if(!customer) return alert("Select customer");
+
+  let data = getData();
+  let standard = document.getElementById("standardSelect").value;
+
+  if(!data.customers[customer][standard])
+    data.customers[customer][standard] = [];
+
+  let answers = document.querySelectorAll(".answer");
+
+  let total = 0;
+  let max = 0;
+  let weightedTotal = 0;
+  let weightedMax = 0;
+
+  currentModule.questions.forEach((q,i)=>{
+
+    let score = parseInt(answers[i].value);
+    total += score;
+    max += 2;
+
+    let root = q.clause.split(".")[0];
+    let weight = currentModule.weights?.[root] || 1;
+
+    weightedTotal += score * weight;
+    weightedMax += 2 * weight;
+
+  });
+
+  let rawScore = Math.round((total/max)*100);
+  let weightedScore = Math.round((weightedTotal/weightedMax)*100);
+
+  data.customers[customer][standard].push({
+    timestamp: Date.now(),
+    rawScore,
+    weightedScore
+  });
+
+  saveData(data);
+  loadVersions();
+  renderDashboard();
+}
+
+/* ---------------- VERSIONS ---------------- */
+
+function loadVersions(){
+  let customer = document.getElementById("customerDropdown").value;
+  if(!customer) return;
+
+  let data = getData();
+  let standard = document.getElementById("standardSelect").value;
+
+  let versions = data.customers[customer][standard] || [];
+
+  let vd = document.getElementById("versionDropdown");
+  vd.innerHTML = "";
+
+  versions.forEach((v,i)=>{
+    let opt = document.createElement("option");
+    opt.value = i;
+    opt.text = new Date(v.timestamp).toLocaleDateString()+" - "+v.weightedScore+"%";
+    vd.appendChild(opt);
+  });
+}
+
+/* ---------------- DASHBOARD ---------------- */
+
+function renderDashboard(){
+  let customer = document.getElementById("customerDropdown").value;
+  if(!customer) return;
+
+  let data = getData();
+  let standard = document.getElementById("standardSelect").value;
+  let index = document.getElementById("versionDropdown").value;
+
+  if(index === "") return;
+
+  let version = data.customers[customer][standard][index];
+
+  document.getElementById("scoreDisplay").innerHTML = `
+    <div class="scoreBox green">Raw Score<br>${version.rawScore}%</div>
+    <div class="scoreBox blue">Weighted Score<br>${version.weightedScore}%</div>
+  `;
+}
+
+/* ---------------- INIT ---------------- */
 
 buildAuditForm();
 
