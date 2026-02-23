@@ -10,7 +10,6 @@ body{margin:0;font-family:Segoe UI;background:#F4F7FB;}
 background:#0B3C5D;color:white;padding:15px 25px;
 display:flex;justify-content:space-between;align-items:center;
 }
-.logo{font-weight:bold;font-size:18px;}
 .layout{display:flex;height:calc(100vh - 60px);}
 .sidebar{
 width:220px;background:#082C45;color:white;padding-top:20px;
@@ -26,103 +25,49 @@ color:white;border-radius:6px;text-align:left;cursor:pointer;
 background:white;padding:15px;border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:20px;
 }
-.card-title{font-weight:600;color:#0B3C5D;margin-bottom:10px;}
-input,select,textarea{
+.question{
+background:#f9f9f9;padding:10px;margin:8px 0;border-radius:6px;
+}
+.toggle{font-size:12px;color:#1D9BF0;cursor:pointer;margin-right:10px;}
+.hidden{display:none;}
+select,input,textarea{
 width:100%;padding:6px;margin-top:5px;
 border-radius:6px;border:1px solid #ccc;
 }
 button.primary{
-background:#1D9BF0;border:none;color:white;
-padding:8px 12px;border-radius:6px;cursor:pointer;margin-top:8px;
+background:#1D9BF0;color:white;border:none;
+padding:8px 12px;border-radius:6px;margin-top:8px;
 }
 button.primary:hover{background:#0B3C5D;}
 .section{display:none;}
 .active{display:block;}
-.question{
-background:#f9f9f9;padding:8px;margin:6px 0;border-radius:6px;
-}
-.heatbox{
-display:inline-block;width:150px;padding:12px;
-margin:5px;border-radius:8px;color:white;text-align:center;
-font-weight:600;
-}
-.green{background:#2ECC71;}
-.yellow{background:#F39C12;}
-.red{background:#E74C3C;}
-.blue{background:#1D9BF0;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{border:1px solid #ddd;padding:6px;font-size:13px;}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-<div class="logo">AVINTIX | Comply360</div>
-<div>ISO 9001</div>
+<div><b>AVINTIX | Comply360</b></div>
+
+<select id="standardSelect">
+<option value="ISO 9001">ISO 9001</option>
+<option value="ISO 27001:2023">ISO 27001:2023</option>
+</select>
+
 </div>
 
 <div class="layout">
 
 <div class="sidebar">
-<button onclick="showSection('dashboard')">Dashboard</button>
 <button onclick="showSection('audit')">Audit Engine</button>
-<button onclick="showSection('capa')">CAPA Tracker</button>
 </div>
 
 <div class="content">
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="section active">
+<div id="audit" class="section active">
 <div class="card">
-<div class="card-title">Executive Dashboard</div>
-
-<select id="customerDropdown" onchange="loadVersions()">
-<option value="">-- Select Customer --</option>
-</select>
-
-<select id="versionDropdown" onchange="renderDashboard()"></select>
-
-<div id="dashboardContent"></div>
-
-<button class="primary" onclick="exportAuditPDF()">Export Audit PDF</button>
-
-</div>
-</div>
-
-<!-- AUDIT -->
-<div id="audit" class="section">
-<div class="card">
-<div class="card-title">Customer</div>
-<input id="customerName" placeholder="Customer Name">
-<button class="primary" onclick="createCustomer()">Create</button>
-</div>
-
-<div class="card">
-<div class="card-title">ISO 9001 Audit</div>
+<h3>Audit Questions</h3>
 <div id="auditForm"></div>
-<button class="primary" onclick="saveAudit()">Save Version</button>
-</div>
-</div>
-
-<!-- CAPA -->
-<div id="capa" class="section">
-<div class="card">
-<div class="card-title">CAPA Tracker</div>
-
-<label>Clause</label>
-<input id="capaClause">
-<label>Description</label>
-<textarea id="capaDesc"></textarea>
-<label>Owner</label>
-<input id="capaOwner">
-<label>Target Date</label>
-<input type="date" id="capaDate">
-
-<button class="primary" onclick="addCAPA()">Add CAPA</button>
-
-<div id="capaList"></div>
-
 </div>
 </div>
 
@@ -130,298 +75,6 @@ th,td{border:1px solid #ddd;padding:6px;font-size:13px;}
 </div>
 
 <script type="module">
-...
-</script>
-
-// ---------- NAVIGATION ----------
-function showSection(id){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-// ---------- STORAGE ----------
-function getData(){
-return JSON.parse(localStorage.getItem("comply360"))||{customers:{}};
-}
-function saveData(d){
-localStorage.setItem("comply360",JSON.stringify(d));
-}
-
-// ---------- RISK WEIGHTS ----------
-const clauseWeights={
-"4":1.1,"5":1.3,"6":1.4,"7":1.0,"8":1.3,"9":1.2,"10":1.3
-};
-
-// ---------- QUESTIONS ----------
-const isoQuestions=[
-{clause:"4.1",q:"Has context been identified?"},
-{clause:"5.1",q:"Leadership commitment demonstrated?"},
-{clause:"6.1",q:"Risks identified and mitigated?"},
-{clause:"7.5",q:"Documents controlled?"},
-{clause:"8.2",q:"Customer requirements reviewed?"},
-{clause:"9.2",q:"Internal audits conducted?"},
-{clause:"10.2",q:"Corrective actions implemented?"}
-];
-while(isoQuestions.length<40){
-isoQuestions.push({...isoQuestions[isoQuestions.length%7]});
-}
-
-// ---------- BUILD FORM ----------
-let form="";
-isoQuestions.forEach((q,i)=>{
-form+=`
-<div class="question">
-<b>${q.clause}</b><br>
-${q.q}
-<select class="answer">
-<option value="2">Yes</option>
-<option value="1">Partial</option>
-<option value="0">No</option>
-</select>
-<textarea placeholder="Comment"></textarea>
-</div>`;
-});
-document.getElementById("auditForm").innerHTML=form;
-
-// ---------- CUSTOMER ----------
-function createCustomer(){
-let name=document.getElementById("customerName").value.trim();
-if(!name)return;
-let d=getData();
-if(!d.customers[name])d.customers[name]=[];
-saveData(d);
-populateCustomers();
-}
-function populateCustomers(){
-let d=getData();
-let dd=document.getElementById("customerDropdown");
-dd.innerHTML='<option value="">-- Select Customer --</option>';
-Object.keys(d.customers).forEach(c=>{
-let o=document.createElement("option");
-o.value=c;o.text=c;dd.appendChild(o);
-});
-}
-populateCustomers();
-
-// ---------- SAVE AUDIT ----------
-function saveAudit(){
-let customer=document.getElementById("customerDropdown").value;
-if(!customer)return alert("Select customer");
-
-let d=getData();
-let answers=document.querySelectorAll(".answer");
-let comments=document.querySelectorAll("textarea");
-
-let total=0,max=0,weightedTotal=0,weightedMax=0;
-let major=0,minor=0;
-let clauseScores={};
-let answerList=[];
-
-isoQuestions.forEach((q,i)=>{
-let score=parseInt(answers[i].value);
-let root=q.clause.split(".")[0];
-let weight=clauseWeights[root]||1;
-
-total+=score; max+=2;
-weightedTotal+=score*weight;
-weightedMax+=2*weight;
-
-if(!clauseScores[q.clause])clauseScores[q.clause]={total:0,count:0};
-clauseScores[q.clause].total+=score;
-clauseScores[q.clause].count++;
-
-if(score===0)major++;
-if(score===1)minor++;
-
-answerList.push({
-clause:q.clause,
-score:score,
-comment:comments[i].value
-});
-});
-
-let rawScore=Math.round((total/max)*100);
-let weightedScore=Math.round((weightedTotal/weightedMax)*100);
-
-let version={
-timestamp:Date.now(),
-rawScore,weightedScore,major,minor,
-clauseScores,
-answers:answerList,
-capa:[]
-};
-
-d.customers[customer].push(version);
-saveData(d);
-
-loadVersions();
-renderDashboard();
-}
-
-// ---------- LOAD VERSIONS ----------
-function loadVersions(){
-let customer=document.getElementById("customerDropdown").value;
-if(!customer)return;
-let d=getData();
-let versions=d.customers[customer];
-
-let vd=document.getElementById("versionDropdown");
-vd.innerHTML="";
-versions.forEach((v,i)=>{
-let o=document.createElement("option");
-o.value=i;
-o.text=new Date(v.timestamp).toLocaleDateString()+" - "+v.weightedScore+"%";
-vd.appendChild(o);
-});
-}
-
-// ---------- DASHBOARD ----------
-function renderDashboard(){
-let customer=document.getElementById("customerDropdown").value;
-if(!customer)return;
-let d=getData();
-let versions=d.customers[customer];
-let idx=parseInt(document.getElementById("versionDropdown").value);
-let v=versions[idx];
-let prev=versions[idx-1];
-
-let trend="";
-if(prev){
-let diff=v.weightedScore-prev.weightedScore;
-if(diff>0)trend=" ▲ +"+diff+"%";
-if(diff<0)trend=" ▼ "+diff+"%";
-}
-
-let html=`
-<div class="heatbox green">Raw<br>${v.rawScore}%</div>
-<div class="heatbox blue">Weighted<br>${v.weightedScore}% ${trend}</div>
-<div class="heatbox yellow">Major<br>${v.major}</div>
-<div class="heatbox red">Minor<br>${v.minor}</div>
-`;
-
-document.getElementById("dashboardContent").innerHTML=html;
-renderCAPA();
-}
-
-// ---------- CAPA ----------
-function addCAPA(){
-let customer=document.getElementById("customerDropdown").value;
-let d=getData();
-let idx=parseInt(document.getElementById("versionDropdown").value);
-let v=d.customers[customer][idx];
-
-v.capa.push({
-clause:document.getElementById("capaClause").value,
-desc:document.getElementById("capaDesc").value,
-owner:document.getElementById("capaOwner").value,
-target:document.getElementById("capaDate").value,
-status:"Open"
-});
-saveData(d);
-renderCAPA();
-}
-
-function renderCAPA(){
-let customer=document.getElementById("customerDropdown").value;
-if(!customer)return;
-let d=getData();
-let idx=parseInt(document.getElementById("versionDropdown").value);
-let v=d.customers[customer][idx];
-
-let html="<table><tr><th>Clause</th><th>Description</th><th>Owner</th><th>Target</th><th>Status</th></tr>";
-v.capa.forEach(c=>{
-html+=`<tr><td>${c.clause}</td><td>${c.desc}</td><td>${c.owner}</td><td>${c.target}</td><td>${c.status}</td></tr>`;
-});
-html+="</table>";
-document.getElementById("capaList").innerHTML=html;
-}
-
-// ---------- PDF EXPORT ----------
-function exportAuditPDF(){
-
-let customer=document.getElementById("customerDropdown").value;
-let d=getData();
-let versions=d.customers[customer];
-let idx=parseInt(document.getElementById("versionDropdown").value);
-let v=versions[idx];
-let prev=versions[idx-1];
-
-let auditRef="AVX-ISO9001-"+customer.replace(/\s/g,'').toUpperCase()+"-V"+(idx+1);
-
-// Improvements
-let improvements="";
-if(prev){
-v.answers.forEach((a,i)=>{
-if(prev.answers[i] && a.score>prev.answers[i].score){
-improvements+=`<tr><td>${a.clause}</td><td>${prev.answers[i].score}</td><td>${a.score}</td></tr>`;
-}
-});
-}
-if(!improvements) improvements="<tr><td colspan='3'>No improvements</td></tr>";
-
-// Heatmap
-let heatmap="";
-Object.keys(v.clauseScores).forEach(c=>{
-let percent=Math.round((v.clauseScores[c].total/(v.clauseScores[c].count*2))*100);
-heatmap+=`<tr><td>${c}</td><td>${percent}%</td></tr>`;
-});
-
-// NCR
-let ncr="";
-v.answers.forEach(a=>{
-if(a.score<2){
-ncr+=`<tr><td>${a.clause}</td><td>${a.score===0?"Major":"Minor"}</td><td>${a.comment||""}</td></tr>`;
-}
-});
-if(!ncr) ncr="<tr><td colspan='3'>No NCR</td></tr>";
-
-// CAPA
-let capa="";
-v.capa.forEach(c=>{
-capa+=`<tr><td>${c.clause}</td><td>${c.desc}</td><td>${c.owner}</td><td>${c.target}</td><td>${c.status}</td></tr>`;
-});
-if(!capa) capa="<tr><td colspan='5'>No CAPA</td></tr>";
-
-let html=`
-<html>
-<body style="font-family:Arial;padding:40px;">
-<img src="logo.png" height="60"><br><br>
-<b>Audit Reference:</b> ${auditRef}<br>
-<b>Date:</b> ${new Date(v.timestamp).toLocaleDateString()}<br>
-<b>Customer:</b> ${customer}<br>
-<b>Raw Score:</b> ${v.rawScore}%<br>
-<b>Weighted Score:</b> ${v.weightedScore}%<br>
-<b>Major:</b> ${v.major} | <b>Minor:</b> ${v.minor}
-
-<h2>Clause Heatmap</h2>
-<table border="1">${heatmap}</table>
-
-<h2>NCR Details</h2>
-<table border="1"><tr><th>Clause</th><th>Type</th><th>Comment</th></tr>${ncr}</table>
-
-<h2>Improvements Since Previous Audit</h2>
-<table border="1"><tr><th>Clause</th><th>Previous</th><th>Current</th></tr>${improvements}</table>
-
-<h2>CAPA Tracker</h2>
-<table border="1"><tr><th>Clause</th><th>Description</th><th>Owner</th><th>Target</th><th>Status</th></tr>${capa}</table>
-
-<br><br>
-<div style="margin-top:60px;">
-<div style="width:45%;float:left;border-top:1px solid #000;text-align:center;">Auditor Signature</div>
-<div style="width:45%;float:right;border-top:1px solid #000;text-align:center;">Customer Signature</div>
-</div>
-
-</body>
-</html>
-`;
-
-let win=window.open("");
-win.document.write(html);
-win.document.close();
-win.print();
-}
-
-  <script type="module">
 
 import { iso9001 } from "./modules/iso9001.js";
 import { iso27001 } from "./modules/iso27001.js";
@@ -455,11 +108,12 @@ function buildAuditForm(){
       <div id="ev${i}" class="hidden"><b>Evidence:</b> ${q.evidence}</div>
       <div id="ex${i}" class="hidden"><b>Example:</b> ${q.example}</div>
 
-      <select class="answer">
+      <select>
         <option value="2">Yes</option>
         <option value="1">Partial</option>
         <option value="0">No</option>
       </select>
+
       <textarea placeholder="Comment"></textarea>
     </div>`;
   });
@@ -467,13 +121,13 @@ function buildAuditForm(){
   document.getElementById("auditForm").innerHTML = html;
 }
 
-function toggle(id){
+window.toggle = function(id){
   document.getElementById(id).classList.toggle("hidden");
 }
 
 buildAuditForm();
 
 </script>
-</script>
+
 </body>
 </html>
