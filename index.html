@@ -194,9 +194,9 @@ footer{
     <div class="header-bar">
       <div class="logo"><img src="avintix-logo.png" alt="Avintix Logo"></div>
       <div class="product-name">Avintix Comply360</div>
-      <div class="tenant" id="user">Logged in user</div>
+      
     </div>
-      <div class="tenant" id="user">Logged in user</div>
+      
     </div>
   </div>
 </header>
@@ -372,18 +372,57 @@ if(score===1){minor+=`<div class="ncr-minor"><b>Minor NCR:</b> ${questionText}<b
 index++;
 });}
 let percent=Math.round((total/max)*100);
-let maturity=percent<=40?"Initial":percent<=60?"Defined":percent<=75?"Managed":percent<=90?"Optimized":"Certification Ready";
-document.getElementById("result").style.display="block";
-document.getElementById("result").innerHTML=`<h2>Audit Summary</h2><p><strong>Compliance Score:</strong> ${percent}%</p><p><strong>Maturity Level:</strong> ${maturity}</p><h3>Major NCR</h3>${major||"None"}<h3>Minor NCR</h3>${minor||"None"}`;
+
+// Revised Maturity Logic
+let hasMajor = major.trim() !== "";
+let hasMinor = minor.trim() !== "";
+
+let maturity;
+
+if(hasMajor){
+  maturity = "High Risk – Major Gaps Present";
+} else if(percent <= 40){
+  maturity = "Initial";
+} else if(percent <= 60){
+  maturity = "Defined";
+} else if(percent <= 75){
+  maturity = hasMinor ? "Managed (Minor Gaps)" : "Managed";
+} else if(percent <= 90){
+  maturity = hasMinor ? "Optimized (Minor Gaps)" : "Optimized";
+} else {
+  maturity = hasMinor ? "Near Certification (Minor Gaps)" : "Certification Ready";
 }
-fetch('/.auth/me')
-  .then(res => res.json())
-  .then(data => {
-    if(data && data.clientPrincipal){
-      document.getElementById("user").innerText =
-        "Logged in as: " + data.clientPrincipal.userDetails;
-    }
+
+let riskColor = hasMajor ? "#d11a2a" : hasMinor ? "#f37f1c" : "#2e7d32";
+
+// Clause-wise breakdown
+let clauseBreakdown = "";
+let idx = 0;
+for(let clause in auditData){
+  let clauseScore = 0;
+  let clauseMax = auditData[clause].length * 2;
+  auditData[clause].forEach(()=>{
+    clauseScore += parseInt(scores[idx].value);
+    idx++;
   });
+  let clausePercent = Math.round((clauseScore/clauseMax)*100);
+  clauseBreakdown += `<p><strong>${clause}:</strong> ${clausePercent}%</p>`;
+}
+
+document.getElementById("result").style.display="block";
+document.getElementById("result").innerHTML=`
+<h2>Audit Summary</h2>
+<p><strong>Compliance Score:</strong> ${percent}%</p>
+<p><strong>Maturity Level:</strong> <span style="color:${riskColor};font-weight:700;">${maturity}</span></p>
+<hr>
+<h3>Clause Performance</h3>
+${clauseBreakdown}
+<hr>
+<h3>Major NCR</h3>${major||"None"}
+<h3>Minor NCR</h3>${minor||"None"}
+`;
+}
+
 
 </script>
 </body>
