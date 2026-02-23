@@ -185,6 +185,12 @@ footer{
   .layout{flex-direction:column;}
   .sidebar{width:100%;position:static;}
 }
+@media print{
+  body *{visibility:hidden;}
+  #result, #result *{visibility:visible;}
+  #result{position:absolute;left:0;top:0;width:100%;}
+  @page{margin:40px;}
+}
 </style>
 </head>
 <body>
@@ -258,7 +264,9 @@ footer{
 </div>
 <div id="auditForm"></div>
 <button onclick="generateReport()">Generate Audit Report</button>
-<div id="result" class="section" style="display:none;"></div>
+<div id="result" class="section" style="display:none;">
+<canvas id="summaryChart" height="120" style="margin-bottom:20px;"></canvas>
+<button onclick="printReport()" style="margin-bottom:20px;">Download PDF</button></div>
 </div>
 
 <div id="capaSection" style="display:none;">
@@ -434,8 +442,12 @@ document.getElementById("result").style.display="block";
 // Save results per customer
 localStorage.setItem("audit_"+selectedCustomer, JSON.stringify({percent, maturity}));
 updateDashboardChart();
+drawSummaryChart(percent);
 
 document.getElementById("result").innerHTML=`
+<canvas id="summaryChart" height="120" style="margin-bottom:20px;"></canvas>
+<button onclick="printReport()" style="margin-bottom:20px;">Download PDF</button>
+
 <h2>Audit Summary</h2>
 <p><strong>Compliance Score:</strong> ${percent}%</p>
 <p><strong>Maturity Level:</strong> <span style="color:${riskColor};font-weight:700;">${maturity}</span></p>
@@ -477,6 +489,39 @@ document.getElementById("activeCustomer").innerText = selected || "No customer s
 }
 
 // ---------------- DASHBOARD GRAPH ----------------
+function drawSummaryChart(percent){
+let canvas=document.getElementById("summaryChart");
+if(!canvas) return;
+let ctx=canvas.getContext("2d");
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+// Circular progress
+let centerX=150;
+let centerY=80;
+let radius=60;
+let endAngle=(percent/100)*2*Math.PI;
+
+ctx.beginPath();
+ctx.arc(centerX,centerY,radius,0,2*Math.PI);
+ctx.strokeStyle="#e6e6e6";
+ctx.lineWidth=12;
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(centerX,centerY,radius,-Math.PI/2,endAngle-Math.PI/2);
+ctx.strokeStyle="#59146f";
+ctx.lineWidth=12;
+ctx.stroke();
+
+ctx.font="18px Inter";
+ctx.fillStyle="#59146f";
+ctx.fillText(percent+"%",centerX-20,centerY+5);
+}
+
+function printReport(){
+window.print();
+}
+
 function updateDashboardChart(){
 let customers=JSON.parse(localStorage.getItem("customers")||"[]");
 let canvas=document.getElementById("dashboardChart");
